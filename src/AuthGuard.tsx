@@ -21,7 +21,7 @@ export default function AuthGuard({ children }: AuthGuardProps) {
     }
   }, [isLoaded, isSignedIn, navigate]);
 
-  if (!isLoaded) return (<Loader/>);
+  if (!true) return (<Loader/>);
 
   if (!isSignedIn) return (<LandingPage/>); // prevent flicker
 

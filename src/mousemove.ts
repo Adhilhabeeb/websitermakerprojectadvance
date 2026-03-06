@@ -556,32 +556,51 @@ mobMapRef.current.set(mobileobjsearr.name, mobileobjsearr)
             //whe lap
 
             // console.log(parseInt(element.style.width),"is elent width",elemntrect)
-        if (
-          !ismobilevalue.current &&
-          x <
-            document.documentElement.clientWidth - elemntrect.width && y>navbarprops
-        ) {
-       
-
-// console.log(t,"is the ttttt",p)
-          // console.log(checkedasmobile, "is checkasmonile");
-          t.style.left = (x / window.innerWidth) * 100 + "%";
-          t.style.top = (y / document.documentElement.clientHeight) * 100 + "%";
+     if (!ismobilevalue.current && y>navbarprops) {
+  const halfW = elemntrect.width / 2;
+  const halfH = elemntrect.height / 2;
 
 
-//  the lap
+  const clampedX = Math.max(
+    halfW,
+    Math.min(x, document.documentElement.clientWidth - halfW)
+  );
+ 
 
-let lapobject={...objset}
-lapobject.left=0
+  const centeredX = clampedX - halfW;
+   const centeredY = Math.max(
+    navbarprops,
+    Math.min(y -halfH, document.documentElement.clientHeight )
+  );
+
+  console.log( navbarprops,"anndnd",y -halfH,"amd min:", Math.min(y -halfH, document.documentElement.clientHeight ),"maxis:",centeredY )
+
+  t.style.left = (centeredX / window.innerWidth) * 100 + "%";
+   t.style.top = (centeredY / document.documentElement.clientHeight) * 100 + "%";
+console.log("elenttop:",t.style.top)
+  // lap — top relative to below navbar
+
+const curyy = (y - (navbarprops))
+   const canvasHeight = document.documentElement.clientHeight ;
+  let lapobject = { ...objset };
+  lapobject.left=0
 lapobject.top=0
 
- let curyy=y-navbarprops
  
-lapobject.left=(x / window.innerWidth) * 100 + "%";
-lapobject.top=(curyy / document.documentElement.clientHeight) * 100 + "%"
+  lapobject.left = (centeredX / window.innerWidth) * 100 + "%";
 
-lapref.set(lapobject.name,lapobject)
-lapMapRef.current.set(lapobject.name,lapobject)
+// const curyydemo = y - halfH - navbarprops; 
+    // lapobject.top = (curyy / (canvasHeight)) * 100 + "%";
+ lapobject.top = (((centeredY - navbarprops)+5) / canvasHeight) * 100 + "%";
+
+//  lapobject.top = (curyydemo/ canvasHeight) * 100 + "%";
+
+ console.log("cenbterofy:",centeredY,"y-halfh:",y-halfH,"y is:",y)
+  lapref.set(lapobject.name, lapobject);
+  lapMapRef.current.set(lapobject.name, lapobject);
+// console.log(t,"is the ttttt",p)
+          // console.log(checkedasmobile, "is checkasmonile");
+      
 //  console.log(curyy,"is cutrryyyyy",(curyy / document.documentElement.clientHeight) * 100 + "%",lapobject)
 // console.log(lapref,"is  lapobjevt ",mapref)
 //  the lap

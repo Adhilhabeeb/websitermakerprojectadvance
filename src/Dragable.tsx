@@ -498,7 +498,7 @@ div.style.position = "absolute";
 div.style.width="auto"
 div.style.height="auto"
 
-
+console.log("leftis:",data?.left)
 div.style.left = data?.left ?? "0px";
 div.style.top = data?.top?? navref.current?.getBoundingClientRect().height+10+"px";
 div.append(hr,hr2,hr3,hr4,button)
@@ -521,7 +521,7 @@ let navbarprops=navbar?.getBoundingClientRect().height as number
  setshowsidemenu(false)
  setshowpanel(false)
   if(checkedasmobile){
-
+console.log(oldmobmap,"is oldmob")
 createElementsFromMap(oldmobmap,addbbutton,navbarprops)
 console.log(oldmobmap,"is my ioldmaooo")
   }else{

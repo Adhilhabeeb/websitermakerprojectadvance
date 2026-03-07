@@ -576,11 +576,11 @@ mobMapRef.current.set(mobileobjsearr.name, mobileobjsearr)
   console.log( navbarprops,"anndnd",y -halfH,"amd min:", Math.min(y -halfH, document.documentElement.clientHeight ),"maxis:",centeredY )
 
   t.style.left = (centeredX / window.innerWidth) * 100 + "%";
-   t.style.top = (centeredY / document.documentElement.clientHeight) * 100 + "%";
+   t.style.top = (y / document.documentElement.clientHeight) * 100 + "%";
 console.log("elenttop:",t.style.top)
   // lap — top relative to below navbar
 
-const curyy = (y - (navbarprops))
+const curyy = y-navbarprops
    const canvasHeight = document.documentElement.clientHeight ;
   let lapobject = { ...objset };
   lapobject.left=0
@@ -590,8 +590,8 @@ lapobject.top=0
   lapobject.left = (centeredX / window.innerWidth) * 100 + "%";
 
 // const curyydemo = y - halfH - navbarprops; 
-    // lapobject.top = (curyy / (canvasHeight)) * 100 + "%";
- lapobject.top = (((centeredY - navbarprops)+5) / canvasHeight) * 100 + "%";
+    lapobject.top = (curyy / (document.documentElement.clientHeight)) * 100 + "vh";
+//  lapobject.top = (((centeredY - navbarprops)+5) / canvasHeight) * 100 + "%";
 
 //  lapobject.top = (curyydemo/ canvasHeight) * 100 + "%";
 

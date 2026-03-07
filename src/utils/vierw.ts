@@ -99,9 +99,9 @@ if (!checkmobile) {
   
  
 
-  let topnavinpercentage=(navbarprops/ document.documentElement.clientHeight) * 100 
+  let topnavinpercentage=((navbarprops)/ document.documentElement.clientHeight) * 100 
 console.log("topper",navbarprops,"peerrr",topnavinpercentage)
-newdata.top=(parseInt(data.top)-5)+topnavinpercentage+"%"
+newdata.top=(parseInt(data.top))+topnavinpercentage+"%"
 }
 
   

@@ -101,7 +101,9 @@ if (!checkmobile) {
 
   let topnavinpercentage=((navbarprops)/ document.documentElement.clientHeight) * 100 
 console.log("topper",navbarprops,"peerrr",topnavinpercentage)
-newdata.top=(parseInt(data.top))+topnavinpercentage+"%"
+newdata.top=(parseFloat(data.top))+topnavinpercentage+"%"
+}else{
+ newdata.left=parseFloat(newdata.left)+0.3+"%"
 }
 
   
@@ -226,8 +228,8 @@ export  async function createhtml(
           if(prop === "left"){
           console.log((window.innerWidth/100)*parseInt(config[prop]),"issss",config[prop])
 
-        // el.style[prop]=    (window.innerWidth/100)*parseInt(config[prop])+"px";
-        el.style[prop]= parseInt(config[prop])+"vw"
+        // el.style[prop]=    (window.innerWidth/100)*parseFloat(config[prop])+"px";
+        el.style[prop]= parseFloat(config[prop])+"vw"
        continue;
           }
             el.style[prop] = config[prop];

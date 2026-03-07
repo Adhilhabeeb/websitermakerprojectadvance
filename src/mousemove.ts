@@ -572,7 +572,7 @@ if (!ismobilevalue.current) {
   // We use Math.max(navbarprops, ...) to stop the element at the navbar edge
   const centeredY = Math.max(
     navbarprops,
-    Math.min(y - halfH, document.documentElement.clientHeight - elemntrect.height)
+    Math.min(y - halfH, document.documentElement.clientHeight )
   );
 
   // 4. Update visual position (t.style)
@@ -697,9 +697,11 @@ p.onpointerup = stop_drag
       }
     
       document.addEventListener("keydown", (event) => {
-     
+    
         if (event.key ===  " ") {
           if (drag) {
+   let activeelemt=         document.activeElement as HTMLElement ;
+   activeelemt?.blur()
             // alert("ooo")
             stop_drag();
           }

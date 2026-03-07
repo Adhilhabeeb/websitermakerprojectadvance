@@ -125,13 +125,15 @@ updatemapsave(id,mobMapRef.current,lapMapRef.current,historytmapref.current,mobi
               size="sm"
               variant="secondary"
               className="hover:scale-105 transition-transform"
-            onClick={()=>{
+            onClick={(e)=>{
              if (location.pathname.includes("project")) {
               localStorage.setItem("projnav",location.pathname)
               navigate("/designview")
+              setcheckedasmobile(false)
              }else{
 let locationbpathfromlocalstoprage=localStorage.getItem("projnav")
 locationbpathfromlocalstoprage&&navigate(locationbpathfromlocalstoprage)
+ setcheckedasmobile(false)
              }
             }}
             >

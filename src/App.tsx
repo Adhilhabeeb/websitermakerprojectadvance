@@ -43,6 +43,12 @@ declare global {
 // Source - https://stackoverflow.com/a/11381730
 // Posted by Michael Zaporozhets, modified by community. See post 'Timeline' for change history
 // Retrieved 2026-02-02, License - CC BY-SA 4.0
+
+ export type storedvalkuetype={
+  type:string;
+  children:storedvalkuetype[];
+  styles:Record<string,string>
+ }
 export interface Contextapptype {
   checkedasmobile: boolean;
   setcheckedasmobile: React.Dispatch<SetStateAction<boolean>>;
@@ -61,6 +67,7 @@ export interface Contextapptype {
   mobileoldmapstoreing: React.RefObject<Map<string, any>>;
   historytmapref: React.RefObject<Map<number, any>>;
   showsidemenu: boolean;
+  lapview:React.RefObject<storedvalkuetype>;
   slecetdelemnt: string | null;
   setslecetdelemnt: React.Dispatch<SetStateAction<string | null>>;
   setMode:React.Dispatch<SetStateAction< "mobile" | "desktop" >>;
@@ -85,6 +92,11 @@ function detectMob() {
 let lengh = 10;
 
 function App() {
+  let lapview=useRef<storedvalkuetype>({
+    styles:{},
+    children:[],
+    type:"body"
+  })
   const [projpage, setprojpage] = useState(false);
   const [, forceRender] = useState(0);
   const [showsidemenu, setshowsidemenu] = useState(false);
@@ -258,7 +270,7 @@ handleclick()
           mobMapRef,
           lapMapRef,
           historytmapref,
-          mobileoldmapstoreing,setMode,mode
+          mobileoldmapstoreing,setMode,mode,lapview
         }}
       >
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem>

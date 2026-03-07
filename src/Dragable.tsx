@@ -17,7 +17,7 @@ interface dragboxprop{
 function DragableBox(props:any) {
   let {id}=useParams()
   let location=useLocation()
-  let{showpanel,setshowpanel,sethandleecentfunction,forceRender,setshowsidemenu,showsidemenu,slecetdelemnt,setslecetdelemnt,mobMapRef,lapMapRef,historytmapref,mobileoldmapstoreing,mode} =useContext<Contextapptype>(NavContext as any)
+  let{lapview,showpanel,setshowpanel,sethandleecentfunction,forceRender,setshowsidemenu,showsidemenu,slecetdelemnt,setslecetdelemnt,mobMapRef,lapMapRef,historytmapref,mobileoldmapstoreing,mode} =useContext<Contextapptype>(NavContext as any)
 
 let {checkedasmobile,navref,currenthistoryref,recentscountref,setcheckedasmobile}=props
  

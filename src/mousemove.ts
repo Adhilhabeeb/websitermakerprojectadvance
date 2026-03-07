@@ -31,7 +31,7 @@ if (!context) {
 throw new Error("ssry");
 
 }
-let {mobMapRef,mobileoldmapstoreing,lapMapRef}=context
+let {mobMapRef,mobileoldmapstoreing,lapMapRef,lapview}=context
 let rectmobdiv=useRef(null)
   let ismobilevalue = useRef(checkedasmobile);
 let currentrect=useRef<DOMRect |undefined>(null)
@@ -159,6 +159,9 @@ let heightofmobiledesigner=currentrect?.current?.height as number
         // );
         // console.log(p,"isss pp")
        
+ 
+
+
 
         let elemt:string=p.dataset.name?.split("").filter(el =>!isStringInteger(el)).join("")   as string
    
@@ -618,7 +621,7 @@ if (!ismobilevalue.current) {
 
         if (x != offsetX || y != offsetY) {
           // console.log("calllllleddd","x",x,"y",y,"annnddd",offsetX,"y:",offsetY)
-          move(x, y);
+        // move(x,y)
           offsetX = x;
           offsetY = y;
         }
@@ -654,8 +657,13 @@ if (!ismobilevalue.current) {
       var stop_drag = function () {
         
 
-     
-      
+            const elementgetfromxy = document.elementFromPoint(offsetX, offsetY);
+
+if (elementgetfromxy) {
+ 
+  console.log(elementgetfromxy,"ios eleentttt")
+}
+        move(offsetX, offsetY);
         currenthistoryref.current++
           
     recentscountref.current=currenthistoryref.current

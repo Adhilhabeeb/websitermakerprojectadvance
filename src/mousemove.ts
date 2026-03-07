@@ -556,69 +556,54 @@ mobMapRef.current.set(mobileobjsearr.name, mobileobjsearr)
             //whe lap
 
             // console.log(parseInt(element.style.width),"is elent width",elemntrect)
-     if (!ismobilevalue.current && y>navbarprops) {
+if (!ismobilevalue.current) {
+  // 1. Calculate half dimensions for centering
   const halfW = elemntrect.width / 2;
   const halfH = elemntrect.height / 2;
 
-
+  // 2. Calculate centered and clamped X
   const clampedX = Math.max(
     halfW,
     Math.min(x, document.documentElement.clientWidth - halfW)
   );
- 
-
   const centeredX = clampedX - halfW;
-   const centeredY = Math.max(
+
+  // 3. Calculate centered and clamped Y (Ensures it doesn't go above navbar)
+  // We use Math.max(navbarprops, ...) to stop the element at the navbar edge
+  const centeredY = Math.max(
     navbarprops,
-    Math.min(y -halfH, document.documentElement.clientHeight )
+    Math.min(y - halfH, document.documentElement.clientHeight - elemntrect.height)
   );
 
-  console.log( navbarprops,"anndnd",y -halfH,"amd min:", Math.min(y -halfH, document.documentElement.clientHeight ),"maxis:",centeredY )
-
+  // 4. Update visual position (t.style)
+  // We divide by window dimensions and multiply by 100 to get the % for CSS
   t.style.left = (centeredX / window.innerWidth) * 100 + "%";
-   t.style.top = (y / document.documentElement.clientHeight) * 100 + "%";
-console.log("elenttop:",t.style.top)
-  // lap — top relative to below navbar
+  t.style.top = (centeredY / document.documentElement.clientHeight) * 100 + "%";
 
-const curyy = y-navbarprops
-   const canvasHeight = document.documentElement.clientHeight ;
+  // 5. Store in lapobject (Relative to the navbar)
   let lapobject = { ...objset };
-  lapobject.left=0
-lapobject.top=0
-
- 
+  
+  // Calculate top relative to the navbar edge
+  const relativeTopValue = centeredY - navbarprops;
+  
   lapobject.left = (centeredX / window.innerWidth) * 100 + "%";
+  
+  // Store as vh relative to the viewport height, or change to % if preferred
+  lapobject.top = (relativeTopValue / document.documentElement.clientHeight) * 100 + "vh";
 
-// const curyydemo = y - halfH - navbarprops; 
-    lapobject.top = (curyy / (document.documentElement.clientHeight)) * 100 + "vh";
-//  lapobject.top = (((centeredY - navbarprops)+5) / canvasHeight) * 100 + "%";
-
-//  lapobject.top = (curyydemo/ canvasHeight) * 100 + "%";
-
- console.log("cenbterofy:",centeredY,"y-halfh:",y-halfH,"y is:",y)
+  // Sync with your maps
   lapref.set(lapobject.name, lapobject);
   lapMapRef.current.set(lapobject.name, lapobject);
-// console.log(t,"is the ttttt",p)
-          // console.log(checkedasmobile, "is checkasmonile");
-      
-//  console.log(curyy,"is cutrryyyyy",(curyy / document.documentElement.clientHeight) * 100 + "%",lapobject)
-// console.log(lapref,"is  lapobjevt ",mapref)
-//  the lap
 
-
-
-
-          hr.style.top = "-4px";
-          hr.style.left = -(parseInt(hr.style.width) / 2) + "px";
-          //hr2
-          // console.log(element.style.height,"is height")
-          hr2.style.top = elemntrect.height + "px";
-          hr2.style.left = -(parseInt(hr.style.width) / 2) + "px";
-
-          hr3.style.top = -(parseInt(hr3.style.height) / 2) + "px";
-          hr4.style.top = -(parseInt(hr4.style.height) / 2) + "px";
-          hr4.style.left = elemntrect.width + 3 + "px";
-        }
+  /* --- Lines/Guides Positioning --- */
+  hr.style.top = "-4px";
+  hr.style.left = -(parseInt(hr.style.width) / 2) + "px";
+  hr2.style.top = elemntrect.height + "px";
+  hr2.style.left = -(parseInt(hr.style.width) / 2) + "px";
+  hr3.style.top = -(parseInt(hr3.style.height) / 2) + "px";
+  hr4.style.top = -(parseInt(hr4.style.height) / 2) + "px";
+  hr4.style.left = elemntrect.width + 3 + "px";
+}
       };
       var mouseMoveHandler = function (e: MouseEvent) {
         e = e || window.event;

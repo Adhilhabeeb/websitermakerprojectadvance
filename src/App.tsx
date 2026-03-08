@@ -46,7 +46,7 @@ declare global {
 
  export type storedvalkuetype={
   type:string;
-  children:storedvalkuetype[];
+  children:string[];
   styles:Record<string,string>
  }
 export interface Contextapptype {
@@ -68,8 +68,11 @@ export interface Contextapptype {
   historytmapref: React.RefObject<Map<number, any>>;
   showsidemenu: boolean;
   lapview:React.RefObject<storedvalkuetype>;
+  stylesmap: React.RefObject<Map<string, Record<string,string>>>;
   slecetdelemnt: string | null;
   setslecetdelemnt: React.Dispatch<SetStateAction<string | null>>;
+  setparent:React.Dispatch<SetStateAction<string|null >>;
+  parent:string|null;
   setMode:React.Dispatch<SetStateAction< "mobile" | "desktop" >>;
 mode: "mobile" | "desktop"
   
@@ -97,6 +100,7 @@ function App() {
     children:[],
     type:"body"
   })
+  let stylesmap=useRef<Map<string,Record<string,string>>>(new Map())
   const [projpage, setprojpage] = useState(false);
   const [, forceRender] = useState(0);
   const [showsidemenu, setshowsidemenu] = useState(false);
@@ -204,7 +208,7 @@ function App() {
   let historytmapref = useRef<Map<number, any>>(new Map());
 const [mode, setMode] = useState< "mobile" | "desktop">("desktop");
 
-
+const [parent, setparent] = useState<string|null>(null)
 
 
 
@@ -270,7 +274,7 @@ handleclick()
           mobMapRef,
           lapMapRef,
           historytmapref,
-          mobileoldmapstoreing,setMode,mode,lapview
+          mobileoldmapstoreing,setMode,mode,lapview,stylesmap,setparent,parent
         }}
       >
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem>

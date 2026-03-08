@@ -31,7 +31,7 @@ if (!context) {
 throw new Error("ssry");
 
 }
-let {mobMapRef,mobileoldmapstoreing,lapMapRef,lapview}=context
+let {mobMapRef,mobileoldmapstoreing,lapMapRef,lapview,setparent,parent,stylesmap}=context
 let rectmobdiv=useRef(null)
   let ismobilevalue = useRef(checkedasmobile);
 let currentrect=useRef<DOMRect |undefined>(null)
@@ -158,9 +158,9 @@ let heightofmobiledesigner=currentrect?.current?.height as number
          
         // );
         // console.log(p,"isss pp")
+            const elementgetfromxy = document.elementFromPoint(x, y);
        
  
-
 
 
         let elemt:string=p.dataset.name?.split("").filter(el =>!isStringInteger(el)).join("")   as string
@@ -427,7 +427,7 @@ mobileobjsearr.top=(cury/window.innerHeight)*100 +"%"
       // console.log(leftformobile,"is leftmobillllel")
         //  buttonmob.style.left = 0  +"%"
         //           mobileobjsearr.left= 0  +"%"
-
+  
      }
 
   
@@ -438,8 +438,9 @@ mobileobjsearr.top=(cury/window.innerHeight)*100 +"%"
 
  mapref.set(mobileobjsearr.name, mobileobjsearr)
 mobMapRef.current.set(mobileobjsearr.name, mobileobjsearr)
+stylesmap.current.set(mobileobjsearr.name,mobileobjsearr)
 
-//  console.log("new mapref",mapref)
+//  console.log("new mapref",mapref) 
      /////  mobarr setting///////
         if (setmobarr.has(JSON.stringify(mobileobjsearr))) {
     
@@ -580,8 +581,44 @@ if (!ismobilevalue.current) {
 
   // 4. Update visual position (t.style)
   // We divide by window dimensions and multiply by 100 to get the % for CSS
+
+
+if (elementgetfromxy) {
+console.log(elementgetfromxy,"is elele")
+  
+  if (elementgetfromxy.id!="body") {
+    const elementToMove = document.getElementById(p.id)?.querySelector(`#${p.id}`) as HTMLElement;
+   
+if (elementgetfromxy && elementToMove && elementgetfromxy !== elementToMove) {
+  if (elementToMove.id==p.id) {
+    elementToMove.style.position="initial"
+    elementToMove.style.left="initial"
+    elementToMove.style.top="initial"
+
+
+    console.log(elementToMove,"isss")
+  }
+
+console.log(elementToMove,"is slellel")
+  elementgetfromxy.append(elementToMove);
+}
+
+    console.log("notbody:",elementgetfromxy,elementToMove)
+  }else{
+console.log(elementgetfromxy,"isbody")
   t.style.left = (centeredX / window.innerWidth) * 100 + "%";
   t.style.top = (centeredY / document.documentElement.clientHeight) * 100 + "%";
+
+
+    if (!lapview.current.children.includes(p.id as string)) {
+ lapview.current.children.push(p.id as string)
+}
+
+
+
+  }
+}
+
 
   // 5. Store in lapobject (Relative to the navbar)
   let lapobject = { ...objset };
@@ -597,7 +634,7 @@ if (!ismobilevalue.current) {
   // Sync with your maps
   lapref.set(lapobject.name, lapobject);
   lapMapRef.current.set(lapobject.name, lapobject);
-
+stylesmap.current.set(lapobject.name,lapobject)
   /* --- Lines/Guides Positioning --- */
   hr.style.top = "-4px";
   hr.style.left = -(parseInt(hr.style.width) / 2) + "px";
@@ -657,12 +694,8 @@ if (!ismobilevalue.current) {
       var stop_drag = function () {
         
 
-            const elementgetfromxy = document.elementFromPoint(offsetX, offsetY);
 
-if (elementgetfromxy) {
- 
-  console.log(elementgetfromxy,"ios eleentttt")
-}
+
         move(offsetX, offsetY);
         currenthistoryref.current++
           

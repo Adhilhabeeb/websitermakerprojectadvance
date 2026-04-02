@@ -561,6 +561,8 @@ export function usemouse({
 
         // console.log(parseInt(element.style.width),"is elent width",elemntrect)
         if (!ismobilevalue.current) {
+          const elements = document.querySelector(`[data-parent="${p.id + "parent"}"]`)?.querySelector(`#${p.id}`) as HTMLElement;
+          console.log(p.id, "idssd s sidfdddd", elements)
           // 1. Calculate half dimensions for centering
           const halfW = elemntrect.width / 2;
           const halfH = elemntrect.height / 2;
@@ -589,7 +591,7 @@ export function usemouse({
               let elemtxystyles = elementgetfromxy.style;
               if (elementgetfromxy.id != "body" && elementgetfromxy.id != "navbar" && elementgetfromxy.id != p.id) {
 
-                const elementToMove = document.getElementById(p.id)?.querySelector(`#${p.id}`) as HTMLElement;
+                const elementToMove = elements;
                 console.log("called", elementgetfromxy, "and", elementToMove)
 
 

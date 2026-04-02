@@ -66,7 +66,7 @@ export default function ButtonEditor({
         let [name, value] = el;
 
         if (name == "text") {
-          elemet.innerHTML = value as string;
+          // elemet.innerHTML = value as string;
         }
 
         if (name == "placeholder") {

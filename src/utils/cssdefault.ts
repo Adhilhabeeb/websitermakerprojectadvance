@@ -1,156 +1,156 @@
 
-type hh=Record<string,string>
-export let cssdefalult :Record<string,
-hh>={
-div: {
-  /* SIZE */
-  width: "100px",
- height:"100px",
-  padding: "0px",
-text:"",
-  /* BACKGROUND */
-  backgroundColor: "#ffffff",
-  backgroundImage: "none",
-  backgroundSize: "cover",
-  backgroundRepeat: "no-repeat",
-  backgroundPosition: "center",
+type hh = Record<string, string>
+export let cssdefalult: Record<string,
+  hh> = {
+  div: {
+    /* SIZE */
+    width: "100px",
+    height: "100px",
+    padding: "0px",
+    text: "",
+    /* BACKGROUND */
+    backgroundColor: "#ffffff",
+    backgroundImage: "none",
+    backgroundSize: "cover",
+    backgroundRepeat: "no-repeat",
+    backgroundPosition: "center",
 
-  /* BORDER */
-  border: "1px solid rgba(0,0,0,0.08)",
-  borderRadius: "16px",
-  outline: "none",
+    /* BORDER */
+    border: "1px solid rgba(0,0,0,0.08)",
+    borderRadius: "16px",
+    outline: "none",
 
-  /* SHADOW */
-  boxShadow: "0 10px 30px rgba(0,0,0,0.12)",
+    /* SHADOW */
+    boxShadow: "0 10px 30px rgba(0,0,0,0.12)",
 
-  /* TEXT */
-  color: "#0f172a",
-  fontFamily: "system-ui, sans-serif",
-  fontSize: "15px",
-  fontWeight: "400",
-  lineHeight: "1.6",
-  letterSpacing: "0.2px",
-  textAlign: "left",
-  whiteSpace: "normal",
+    /* TEXT */
+    color: "#0f172a",
+    fontFamily: "system-ui, sans-serif",
+    fontSize: "15px",
+    fontWeight: "400",
+    lineHeight: "1.6",
+    letterSpacing: "0.2px",
+    textAlign: "left",
+    whiteSpace: "normal",
 
-  /* LAYOUT */
-  display: "flex",
-  flexDirection: "column",
-  gap: "12px",
-  alignItems: "flex-start",
-  justifyContent: "flex-start",
+    /* LAYOUT */
+    display: "flex",
+    flexDirection: "column",
+    gap: "12px",
+    alignItems: "flex-start",
+    justifyContent: "flex-start",
 
-  /* EFFECTS */
-  opacity: "1",
-  transform: "none",
-  transition: "all 0.25s ease",
-position: "relative", // needed for zIndex to work
-  zIndex: "10",
-  /* BEHAVIOR */
-  overflow: "hidden",
-  cursor: "default",
+    /* EFFECTS */
+    opacity: "1",
+    transform: "none",
+    transition: "all 0.25s ease",
+    position: "relative", // needed for zIndex to work
+    zIndex: "10",
+    /* BEHAVIOR */
+    overflow: "hidden",
+    cursor: "default",
+  }
+  , p: {
+    color: "#334155",
+    fontFamily: "system-ui, sans-serif",
+    fontSize: "15px",
+    fontWeight: "400",
+    text: "its a ptext",
+
+    margin: "0",
+    padding: "0px",
+
+    whiteSpace: "nowrap",
+    position: "absolute"
+
+    , width: "10px",
+    zIndex: "10"
+  }
+  ,
+  input: {
+    width: "160px",
+    height: "48px",
+    // text: "",
+
+    // padding: "0px 14px",
+
+    // backgroundImage: "none",
+    // backgroundSize: "cover",
+    // backgroundRepeat: "no-repeat",
+    // backgroundPosition: "center",
+
+    backgroundColor: "#ffffff",
+    color: "red",
+
+    border: "1px solid #d1d5db",
+    borderRadius: "10px",
+    outline: "none",
+
+    fontFamily: "system-ui, sans-serif",
+
+    textAlign: "left",
+    textDecoration: "none",
+    textTransform: "none",
+    whiteSpace: "nowrap",
+
+    boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
+    // opacity: "1",
+
+    // transition: "all 0.3s ease",
+    // transform: "none",
+    position: "relative",
+    zIndex: "10",
+    placeholder: "enter your name",
+    // optional placeholder styling support (if handled separately)
+    placeholderColor: "#9ca3af"
+  }
+  ,
+  button: {
+    width: "160px",
+    height: "48px",
+    text: "button",
+    padding: "0px",
+
+    backgroundImage: "url('https://example.com/button-bg.png')",
+    backgroundSize: "cover",
+    backgroundRepeat: "no-repeat",
+    backgroundPosition: "center",
+
+    backgroundColor: "#2563eb",
+    color: "#ffffff",
+
+    border: "1px solid transparent",
+    borderRadius: "10px",
+    outline: "none",
+
+    fontFamily: "system-ui, sans-serif",
+    fontSize: "15px",
+    fontWeight: "600",
+    lineHeight: "1.2",
+    letterSpacing: "0.4px",
+    textAlign: "center",
+    textDecoration: "none",
+    textTransform: "none",
+    whiteSpace: "nowrap",
+
+    boxShadow: "0 6px 16px rgba(0,0,0,0.2)",
+    opacity: "1",
+
+    transition: "all 0.3s ease",
+    transform: "none",
+    position: "relative", // needed for zIndex to work
+    zIndex: "10",
+  }
+
+
+
+
 }
-,p:{
-  color: "#334155",
-  fontFamily: "system-ui, sans-serif",
-  fontSize: "15px",
-  fontWeight: "400",
-  text: "its a ptext",
 
-  margin: "0",
-  padding: "0px",
-
-  whiteSpace: "nowrap",
-  position: "absolute"
-  
- , width:"10px",
-  zIndex: "10"
-}
-,
-input: {
-  width: "160px",
-  height: "48px",
-  // text: "",
-
-  // padding: "0px 14px",
-
-  // backgroundImage: "none",
-  // backgroundSize: "cover",
-  // backgroundRepeat: "no-repeat",
-  // backgroundPosition: "center",
-
-  backgroundColor: "#ffffff",
-  color: "red",
-
-  border: "1px solid #d1d5db",
-  borderRadius: "10px",
-  outline: "none",
-
-  fontFamily: "system-ui, sans-serif",
-
-  textAlign: "left",
-  textDecoration: "none",
-  textTransform: "none",
-  whiteSpace: "nowrap",
-
-  boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
-  // opacity: "1",
-
-  // transition: "all 0.3s ease",
-  // transform: "none",
-  position: "relative",
-  zIndex: "10",
-placeholder:"enter your name",
-  // optional placeholder styling support (if handled separately)
-  placeholderColor: "#9ca3af"
-}
-,
-button: {
-  width: "160px",
-  height: "48px",
-text:"button",
-  padding: "0px",
-
-  backgroundImage: "url('https://example.com/button-bg.png')",
-  backgroundSize: "cover",
-  backgroundRepeat: "no-repeat",
-  backgroundPosition: "center",
-
-  backgroundColor: "#2563eb",
-  color: "#ffffff",
-
-  border: "1px solid transparent",
-  borderRadius: "10px",
-  outline: "none",
-
-  fontFamily: "system-ui, sans-serif",
-  fontSize: "15px",
-  fontWeight: "600",
-  lineHeight: "1.2",
-  letterSpacing: "0.4px",
-  textAlign: "center",
-  textDecoration: "none",
-  textTransform: "none",
-  whiteSpace: "nowrap",
-
-  boxShadow: "0 6px 16px rgba(0,0,0,0.2)",
-  opacity: "1",
-
-  transition: "all 0.3s ease",
-  transform: "none",
-  position: "relative", // needed for zIndex to work
-  zIndex: "10",
-}
+export type eleent = keyof typeof cssdefalult
 
 
-
-
-}
-
- export type eleent= keyof typeof cssdefalult 
-
-
- export const cssValueOptions: Record<string, string[]> = {
+export const cssValueOptions: Record<string, string[]> = {
   /* ================= BACKGROUND ================= */
 
   backgroundRepeat: [
@@ -204,7 +204,29 @@ text:"button",
     "serif",
     "monospace"
   ],
+  flexDirection: [
+    "row",
+    "row-reverse",
+    "column",
+    "column-reverse"
+  ],
 
+  justifyContent: [
+    "flex-start",
+    "flex-end",
+    "center",
+    "space-between",
+    "space-around",
+    "space-evenly"
+  ],
+
+  alignItems: [
+    "stretch",
+    "flex-start",
+    "flex-end",
+    "center",
+    "baseline"
+  ],
   fontWeight: [
     "normal", "bold", "lighter", "bolder",
     "100", "200", "300", "400", "500",

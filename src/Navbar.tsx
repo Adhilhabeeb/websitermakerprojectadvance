@@ -82,7 +82,7 @@ updatemapsave(id,mobMapRef.current,lapMapRef.current,historytmapref.current,mobi
     
   }
   return (
-    <nav
+    <nav id="navbar"
       ref={navref}
       className="sticky top-0 z-50 w-full border-b
       bg-gradient-to-r from-white/80 to-white/60

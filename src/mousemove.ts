@@ -212,77 +212,77 @@ export function usemouse({
         }
         // check that the value is already in the set 
 
-        //         if (setar.size > 0) {
-        //           setar.forEach((el, i) => {
-        //             let parsed = JSON.parse(el);
-        //             // console.log(parsed,"is parsed")
-        //             let left = parseInt(parsed.left);
-        //             let top = parseInt(parsed.top);
-        //             let objleft = parseInt(objset.left);
-        //             let objtop = parseInt(objset.top);
-        // // console.log("left:",left,"top:",top,"objleft",objleft,"objtop:",objtop)
-        //             let leftdiffeernce = left - objleft;
+        // if (setar.size > 0) {
+        //   setar.forEach((el, i) => {
+        //     let parsed = JSON.parse(el);
+        //     // console.log(parsed,"is parsed")
+        //     let left = parseInt(parsed.left);
+        //     let top = parseInt(parsed.top);
+        //     let objleft = parseInt(objset.left);
+        //     let objtop = parseInt(objset.top);
+        //     // console.log("left:",left,"top:",top,"objleft",objleft,"objtop:",objtop)
+        //     let leftdiffeernce = left - objleft;
 
-        //             let topdiffeernce = top - objtop;
-        //             // console.log(parsed.name,"is parsed name ")
-        //             let parsedname = parsed.name;
-        //             const parele = document.getElementById(parsed.name);
-        //             // console.log(parele,"isss parl;eeee")
-        //             let borel = parele?.querySelectorAll(`div`);
-        //             if (Math.abs(leftdiffeernce) < 10) {
-        //               if (objset.name != parsed.name) {
-        //                 // console.log(parsed.name,"is main elem:")
+        //     let topdiffeernce = top - objtop;
+        //     // console.log(parsed.name,"is parsed name ")
+        //     let parsedname = parsed.name;
+        //     const parele = document.getElementById(parsed.name);
+        //     // console.log(parele,"isss parl;eeee")
+        //     let borel = parele?.querySelectorAll(`div`);
+        //     if (Math.abs(leftdiffeernce) < 10) {
+        //       if (objset.name != parsed.name) {
+        //         // console.log(parsed.name,"is main elem:")
 
-        //                  console.log(borel,"is borell")
-        //                 if (!borel) return;
-        //                 let leftlines = [borel[2], borel[3]];
-        //                 // console.log(leftlines,"is lefdt loines")
-        //                 // // console.log(leftlines,"is leftlinessss")
-        //                 oldhrs.current?.forEach((el) => {
-        //                   el.style.display = "none";
-        //                 });
+        //         console.log(borel, "is borell")
+        //         if (!borel) return;
+        //         let leftlines = [borel[2], borel[3]];
+        //         // console.log(leftlines,"is lefdt loines")
+        //         // // console.log(leftlines,"is leftlinessss")
+        //         oldhrs.current?.forEach((el) => {
+        //           el.style.display = "none";
+        //         });
 
-        //                 oldhrs.current = leftlines;
-        //                 leftlines.forEach((el) => {
-        //                   el.style.display = "block";
-        //                 });
+        //         oldhrs.current = leftlines;
+        //         leftlines.forEach((el) => {
+        //           el.style.display = "block";
+        //         });
 
-        //                 //  console.log("recalled,",borel,parsed.name,"is nmain",oldhrs)
-        //                 //  leftlines.forEach(el=>el.style.display="block")
-        //                 //   oldhrs.current= leftlines
+        //         //  console.log("recalled,",borel,parsed.name,"is nmain",oldhrs)
+        //         //  leftlines.forEach(el=>el.style.display="block")
+        //         //   oldhrs.current= leftlines
 
-        //                 //  console.log(drag,"is draggg")
-        //                 //   console.log(parele,"is parent",borel)
-        //                 //   console.log(objset.name,"is child")
-        //               }
-        //             } 
-        //             // else {
-        //             //   if (objset.name != parsed.name) {
-        //             //     const parele = document.getElementById(parsed.name);
-        //             //     // console.log("illllllllllaaaaaaa",parsed.name,"isb",setar)
-        //             //   }
-        //             // }
-        //             //checking top
-        //             if (Math.abs(topdiffeernce) < 10) {
-        //               if (objset.name != parsed.name) {
-        //                 // console.log("near the ", parsed.name, parele, "is elem");
-        //                 if (!borel) return;
+        //         //  console.log(drag,"is draggg")
+        //         //   console.log(parele,"is parent",borel)
+        //         //   console.log(objset.name,"is child")
+        //       }
+        //     }
+        //     // else {
+        //     //   if (objset.name != parsed.name) {
+        //     //     const parele = document.getElementById(parsed.name);
+        //     //     // console.log("illllllllllaaaaaaa",parsed.name,"isb",setar)
+        //     //   }
+        //     // }
+        //     //checking top
+        //     if (Math.abs(topdiffeernce) < 10) {
+        //       if (objset.name != parsed.name) {
+        //         // console.log("near the ", parsed.name, parele, "is elem");
+        //         if (!borel) return;
 
-        //                 let topbtmelem = [borel[0], borel[1]];
-        //                 console.log(topbtmelem,"is topmelem")
-        //                 oldtobtm.current?.forEach((el) => {
-        //                   el.style.display = "none";
-        //                 });
-        //                 oldtobtm.current = topbtmelem;
-        //                 topbtmelem.forEach((el) => {
-        //                   el.style.display = "block";
-        //                 });
-        //               }
-        //             }
-        //             // console.log(parsed,"iss spopoipoipipip")
-        //             // console.log("left:",left,"top",top,"is teh objectleft",objleft,"objtop",objtop,"andd.  left =dioference",Math.abs(leftdiffeernce),"and topdiffrenee:",Math.abs(topdiffeernce))
-        //           });
-        //         }
+        //         let topbtmelem = [borel[0], borel[1]];
+        //         console.log(topbtmelem, "is topmelem")
+        //         oldtobtm.current?.forEach((el) => {
+        //           el.style.display = "none";
+        //         });
+        //         oldtobtm.current = topbtmelem;
+        //         topbtmelem.forEach((el) => {
+        //           el.style.display = "block";
+        //         });
+        //       }
+        //     }
+        //     // console.log(parsed,"iss spopoipoipipip")
+        //     // console.log("left:",left,"top",top,"is teh objectleft",objleft,"objtop",objtop,"andd.  left =dioference",Math.abs(leftdiffeernce),"and topdiffrenee:",Math.abs(topdiffeernce))
+        //   });
+        // }
 
         // console.log("moving",t,"pos",x,
         //     "ammd",y
@@ -600,25 +600,26 @@ export function usemouse({
                 }
                 if (elementgetfromxy && elementToMove && elementgetfromxy.id !== elementToMove.id) {
                   if (elementToMove.id == p.id) {
+                    console.log(elementToMove.id, "is the id", p.id)
                     elementToMove.style.position = "initial"
                     elementToMove.style.left = "initial"
                     elementToMove.style.top = "initial"
 
-                    console.log("calledtheparent", elemtxystyles.left, elemtxystyles.top)
+                    console.log("calledtheparent", elemtxystyles.left, elemtxystyles.top, "nammme:", elementgetfromxy.id)
 
-
-
+                    elementgetfromxy.append(elementToMove)
+                    setslecetdelemnt(elementgetfromxy.id as string)
                   }
 
                   console.log(elementToMove, "isssiiii")
                   console.log(elementToMove, "is slellel", elementgetfromxy)
-                  elementgetfromxy.append(elementToMove);
+                  // elementgetfromxy.append(elementToMove);
                   // elementgetfromxy.style = elemtxystyles as any;
 
 
                 }
 
-                console.log("notbody:", elementgetfromxy, elementToMove)
+                // console.log("notbody:", elementgetfromxy, elementToMove)
               } else {
                 console.log(elementgetfromxy, "isbody")
                 t.style.left = (centeredX / window.innerWidth) * 100 + "%";
@@ -660,7 +661,8 @@ export function usemouse({
           hr2.style.left = -(parseInt(hr.style.width) / 2) + "px";
           hr3.style.top = -(parseInt(hr3.style.height) / 2) + "px";
           hr4.style.top = -(parseInt(hr4.style.height) / 2) + "px";
-          hr4.style.left = elemntrect.width + 3 + "px";
+          hr4.style.left = elemntrect.width + 9 + "px";
+          console.log(elemntrect.width, "is hr4")
         }
       };
       var mouseMoveHandler = function (e: MouseEvent) {
@@ -674,12 +676,15 @@ export function usemouse({
 
         var y: any = mouseY(e);
 
+
+
         if (x != offsetX || y != offsetY) {
           // console.log("calllllleddd","x",x,"y",y,"annnddd",offsetX,"y:",offsetY)
-          // move(x,y)
+          // move(x, y)
           offsetX = x;
           offsetY = y;
         }
+
         return false;
       };
       var start_drag = function (e: any) {
@@ -698,7 +703,7 @@ export function usemouse({
 
         offsetX = mouseX(e);
         offsetY = mouseY(e);
-
+        move(offsetX, offsetY)
         // console.log("offsetxx",offsetX,"offsety",offsetY)
         drag = true; // basically we're using this to detect dragging
 

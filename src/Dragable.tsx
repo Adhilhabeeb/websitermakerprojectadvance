@@ -390,6 +390,9 @@ function DragableBox(props: any) {
 
 
     button.id = data?.name ?? ele + countref.current.toString()
+    button.dataset.name = data?.name
+      ? data?.name + "child"
+      : ele + countref.current.toString() + "child";
 
     let elemntydefauly = data ?? cssdefalult[ele]
     if (elemntydefauly?.text && elemntydefauly?.text.trim() != "") {

@@ -31,7 +31,8 @@ export function usemouse({
     throw new Error("ssry");
 
   }
-  let { mobMapRef, mobileoldmapstoreing, lapMapRef, lapview, setparent, parent, stylesmap } = context
+  let interval: ReturnType<typeof setTimeout> | null = null;
+  let { mobMapRef, mobileoldmapstoreing, lapMapRef, lapview, setparent, parent, stylesmap, recentelement, setrecentelement } = context
   let rectmobdiv = useRef(null)
   let ismobilevalue = useRef(checkedasmobile);
   let currentrect = useRef<DOMRect | undefined>(null)
@@ -45,6 +46,9 @@ export function usemouse({
     currentrect.current = div
   }, [checkedasmobile]);
 
+  useEffect(() => {
+    alert(recentelement)
+  }, [recentelement]);
 
 
   // Source - https://stackoverflow.com/a
@@ -67,36 +71,38 @@ export function usemouse({
   }
 
 
-  function mouseX(e: MouseEvent) {
+  function mouseX(e: MouseEvent): { value: number | null, clientx: number } {
 
     if (e.pageX) {
-      return e.pageX;
+
+      return { value: e.pageX, clientx: e.clientX };
     }
     if (e.clientX) {
 
-      return (
-        e.clientX +
-        (document.documentElement.scrollLeft
-          ? document.documentElement.scrollLeft
-          : document.body.scrollLeft)
-      );
+
+      return {
+        value: e.clientX +
+          (document.documentElement.scrollLeft
+            ? document.documentElement.scrollLeft
+            : document.body.scrollLeft), clientx: e.clientX
+      };
     }
-    return null;
+    return { value: 0, clientx: 0 };
   }
 
-  function mouseY(e: MouseEvent) {
+  function mouseY(e: MouseEvent): { value: number | null, clienty: number } {
     if (e.pageY) {
-      return e.pageY;
+      return { value: e.pageY, clienty: e.clientY };
     }
     if (e.clientY) {
-      return (
-        e.clientY +
-        (document.documentElement.scrollTop
-          ? document.documentElement.scrollTop
-          : document.body.scrollTop)
-      );
+      return {
+        value: e.clientY +
+          (document.documentElement.scrollTop
+            ? document.documentElement.scrollTop
+            : document.body.scrollTop), clienty: e.clientY
+      };
     }
-    return null;
+    return { value: 0, clienty: 0 };
   }
 
   function dragable(
@@ -123,7 +129,8 @@ export function usemouse({
 
   ) {
 
-
+    let clientx: number | null = null
+    let clienty: number | null = null
     // console.log(mapref,"is mpref")
     let navbar = navref.current
     let navbarprops = navbar?.getBoundingClientRect().height as number
@@ -157,11 +164,18 @@ export function usemouse({
         //   "is the mobi checlbox",
 
         // );
-        // console.log(p,"isss pp")
-        const elementgetfromxy = document.elementFromPoint(x, y) as HTMLElement || null;
 
+        console.log(clientx, "is clientxxx", clienty, "is client yuuuuuuu")
 
-
+        const elementgetfromxy = document.elementsFromPoint(clientx as number, clienty as number).find(el => {
+          console.log("elemnetinlopp", el)
+          if (el.id != "body" && el.id != "navbar" && el.tagName != "HTML" && el.id != "root") {
+            console.log("is tyehe loememet", el)
+            return el
+          }
+          return null
+        })
+        console.log(elementgetfromxy, "is slememeyyyy333y.  gg:")
 
         let elemt: string = p.dataset.name?.split("").filter(el => !isStringInteger(el)).join("") as string
 
@@ -585,58 +599,36 @@ export function usemouse({
           // We divide by window dimensions and multiply by 100 to get the % for CSS
 
 
-          try {
-            if (elementgetfromxy) {
-              console.log(elementgetfromxy, "is elele")
-              let elemtxystyles = elementgetfromxy.style;
-              if (elementgetfromxy.id != "body" && elementgetfromxy.id != "navbar" && elementgetfromxy.id != p.id) {
 
-                const elementToMove = elements;
-                console.log("called", elementgetfromxy, "and", elementToMove)
+          if (elementgetfromxy) {
 
-
-                if (elementgetfromxy && elementToMove) {
-                  console.log(elementToMove, "iiiiiyyyyii", elementgetfromxy)
-                }
-                if (elementgetfromxy && elementToMove && elementgetfromxy.id !== elementToMove.id) {
-                  if (elementToMove.id == p.id) {
-                    console.log(elementToMove.id, "is the id", p.id)
-                    elementToMove.style.position = "initial"
-                    elementToMove.style.left = "initial"
-                    elementToMove.style.top = "initial"
-
-                    console.log("calledtheparent", elemtxystyles.left, elemtxystyles.top, "nammme:", elementgetfromxy.id)
-
-                    elementgetfromxy.append(elementToMove)
-                    setslecetdelemnt(elementgetfromxy.id as string)
-                  }
-
-                  console.log(elementToMove, "isssiiii")
-                  console.log(elementToMove, "is slellel", elementgetfromxy)
-                  // elementgetfromxy.append(elementToMove);
-                  // elementgetfromxy.style = elemtxystyles as any;
-
-
-                }
-
-                // console.log("notbody:", elementgetfromxy, elementToMove)
-              } else {
-                console.log(elementgetfromxy, "isbody")
-                t.style.left = (centeredX / window.innerWidth) * 100 + "%";
-                t.style.top = (centeredY / document.documentElement.clientHeight) * 100 + "%";
-
-
-                if (!lapview.current.children.includes(p.id as string)) {
-                  lapview.current.children.push(p.id as string)
-                }
-
-
-
-              }
+            console.log(elementgetfromxy, "is slellele", p.id, "is slemets")
+            // if (elementgetfromxy.id != "body") {
+            const el = document.querySelector(`[data-name="${p.id}child"]`);
+            if (el) {
+              elementgetfromxy.appendChild(el)
+              setrecentelement(p.id as string)
             }
+            // } else {
 
-          } catch (error) {
-            console.log(error, "is error")
+
+
+
+            // }
+
+
+
+
+
+
+          } else {
+            t.style.left = (centeredX / window.innerWidth) * 100 + "%";
+            t.style.top = (centeredY / document.documentElement.clientHeight) * 100 + "%";
+
+
+            if (!lapview.current.children.includes(p.id as string)) {
+              lapview.current.children.push(p.id as string)
+            }
           }
 
           // 5. Store in lapobject (Relative to the navbar)
@@ -666,7 +658,9 @@ export function usemouse({
         }
       };
       var mouseMoveHandler = function (e: MouseEvent) {
+        console.log(e, "is yyyyyy", e.clientX, e.clientY, document.elementsFromPoint(e.clientX, e.clientY))
         e = e || window.event;
+
         // console.log("mousehandlemovecallede ")
         if (!drag) {
           return true;
@@ -678,11 +672,14 @@ export function usemouse({
 
 
 
-        if (x != offsetX || y != offsetY) {
+
+        if (x.value != offsetX || y != offsetY) {
           // console.log("calllllleddd","x",x,"y",y,"annnddd",offsetX,"y:",offsetY)
           // move(x, y)
-          offsetX = x;
-          offsetY = y;
+          offsetX = x.value;
+          offsetY = y.value;
+          clientx = e.clientX;
+          clienty = e.clientY;
         }
 
         return false;
@@ -701,15 +698,14 @@ export function usemouse({
         // console.log("onmousedown")
         e = e || window.event;
 
-        offsetX = mouseX(e);
-        offsetY = mouseY(e);
-        move(offsetX, offsetY)
+        offsetX = mouseX(e).value;
+        offsetY = mouseY(e).value;
         // console.log("offsetxx",offsetX,"offsety",offsetY)
         drag = true; // basically we're using this to detect dragging
 
         // save any previous mousemove event handler:
         if (document.body.onmousemove) {
-          mousemoveTemp = document.body.onmousemove;
+          mousemoveTemp = document.onmousemove;
         }
         document.body.onmousemove = mouseMoveHandler;
         return false;
@@ -717,7 +713,7 @@ export function usemouse({
       var stop_drag = function () {
 
 
-
+        console.log(clientx, clienty, "is clientx and clienty")
 
         move(offsetX, offsetY);
         currenthistoryref.current++
@@ -757,7 +753,7 @@ export function usemouse({
         p.onpointerup = stop_drag
       } else {
         p.onmousedown = start_drag;
-        p.onmouseup = stop_drag;
+        // p.onmouseup = stop_drag;
       }
 
       document.addEventListener("keydown", (event) => {

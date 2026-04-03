@@ -11,7 +11,7 @@ import React, {
 } from "react";
 import type { polltye, sendingmenu } from "./eletron/utils/types";
 import "./App.css";
-import {   QueryClientProvider} from "@tanstack/react-query";
+import { QueryClientProvider } from "@tanstack/react-query";
 import Chartt from "./Chart";
 import type { systemdetatype } from "./eletron/poll";
 
@@ -44,12 +44,14 @@ declare global {
 // Posted by Michael Zaporozhets, modified by community. See post 'Timeline' for change history
 // Retrieved 2026-02-02, License - CC BY-SA 4.0
 
- export type storedvalkuetype={
-  type:string;
-  children:string[];
-  styles:Record<string,string>
- }
+export type storedvalkuetype = {
+  type: string;
+  children: string[];
+  styles: Record<string, string>
+}
 export interface Contextapptype {
+  recentelement: string | null;
+  setrecentelement: React.Dispatch<SetStateAction<string | null>>;
   checkedasmobile: boolean;
   setcheckedasmobile: React.Dispatch<SetStateAction<boolean>>;
   showpanel: boolean;
@@ -67,15 +69,15 @@ export interface Contextapptype {
   mobileoldmapstoreing: React.RefObject<Map<string, any>>;
   historytmapref: React.RefObject<Map<number, any>>;
   showsidemenu: boolean;
-  lapview:React.RefObject<storedvalkuetype>;
-  stylesmap: React.RefObject<Map<string, Record<string,string>>>;
+  lapview: React.RefObject<storedvalkuetype>;
+  stylesmap: React.RefObject<Map<string, Record<string, string>>>;
   slecetdelemnt: string | null;
   setslecetdelemnt: React.Dispatch<SetStateAction<string | null>>;
-  setparent:React.Dispatch<SetStateAction<string|null >>;
-  parent:string|null;
-  setMode:React.Dispatch<SetStateAction< "mobile" | "desktop" >>;
-mode: "mobile" | "desktop"
-  
+  setparent: React.Dispatch<SetStateAction<string | null>>;
+  parent: string | null;
+  setMode: React.Dispatch<SetStateAction<"mobile" | "desktop">>;
+  mode: "mobile" | "desktop"
+
 }
 
 export const NavContext = createContext<Contextapptype | undefined>(undefined);
@@ -95,12 +97,14 @@ function detectMob() {
 let lengh = 10;
 
 function App() {
-  let lapview=useRef<storedvalkuetype>({
-    styles:{},
-    children:[],
-    type:"body"
+  let lapview = useRef<storedvalkuetype>({
+    styles: {},
+    children: [],
+    type: "body"
   })
-  let stylesmap=useRef<Map<string,Record<string,string>>>(new Map())
+
+  let [recentelement, setrecentelement] = useState<string | null>(null)
+  let stylesmap = useRef<Map<string, Record<string, string>>>(new Map())
   const [projpage, setprojpage] = useState(false);
   const [, forceRender] = useState(0);
   const [showsidemenu, setshowsidemenu] = useState(false);
@@ -206,9 +210,9 @@ function App() {
   const lapMapRef = useRef<Map<string, any>>(new Map());
   let mobileoldmapstoreing = useRef<Map<string, any>>(new Map());
   let historytmapref = useRef<Map<number, any>>(new Map());
-const [mode, setMode] = useState< "mobile" | "desktop">("desktop");
+  const [mode, setMode] = useState<"mobile" | "desktop">("desktop");
 
-const [parent, setparent] = useState<string|null>(null)
+  const [parent, setparent] = useState<string | null>(null)
 
 
 
@@ -253,77 +257,77 @@ handleclick()
           Edit <code>src/App.tsx</code> and save to test HMR
         </p> */}
 
-        <QueryClientProvider client={queryClient} >
+      <QueryClientProvider client={queryClient} >
 
-       
-      <NavContext.Provider
-        value={{
-          checkedasmobile,
-          setcheckedasmobile,
-          showpanel,
-          setshowpanel,
-          currenthistoryref,
-          recentscountref,
-          sethandleecentfunction,
-          handleecentfunction: handleecentfunction,
-          forceRender,
-          setshowsidemenu,
-          showsidemenu,
-          slecetdelemnt,
-          setslecetdelemnt,
-          mobMapRef,
-          lapMapRef,
-          historytmapref,
-          mobileoldmapstoreing,setMode,mode,lapview,stylesmap,setparent,parent
-        }}
-      >
-        <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
-          <Clerkprovider>
-            <BrowserRouter>
-              <Navbar navref={navref} />
 
-              <Routes>
-                <Route
-                  path="/"
-                  element={
-                    <AuthGuard>
-                      <Dashboard />
-                    </AuthGuard>
-                  }
-                />
-                 <Route
-                  path="/designview"
-                  element={
-                    <AuthGuard>
-                     <Suspense fallback={<Loader/>}>
-                       <Designviewer mobref={mobMapRef}  lapref={lapMapRef}/>
-                     </Suspense>
-                    </AuthGuard>
-                  }
-                />
-                <Route path="/signin" element={<Cusatemsignin />} />
-                <Route path="/signup" element={<Custemsignup />} />
-                <Route
-                  path="/project/:id"
-                  element={
-                    <AuthGuard>
-                      <DragableBox
-                        recentscountref={recentscountref}
-                        currenthistoryref={currenthistoryref}
-                        checkedasmobile={checkedasmobile}
-                        setcheckedasmobile={setcheckedasmobile}
-                        navref={navref}
-                      ></DragableBox>
-                    </AuthGuard>
-                  }
-                />
-              </Routes>
-              <Footer />
-            </BrowserRouter>
-          </Clerkprovider>
-        </ThemeProvider>
-      </NavContext.Provider>
-       </QueryClientProvider>
+        <NavContext.Provider
+          value={{
+            checkedasmobile,
+            setcheckedasmobile,
+            showpanel,
+            setshowpanel,
+            currenthistoryref,
+            recentscountref,
+            sethandleecentfunction,
+            handleecentfunction: handleecentfunction,
+            forceRender,
+            setshowsidemenu,
+            showsidemenu,
+            slecetdelemnt,
+            setslecetdelemnt,
+            mobMapRef,
+            lapMapRef,
+            historytmapref,
+            mobileoldmapstoreing, setMode, mode, lapview, stylesmap, setparent, parent, recentelement, setrecentelement
+          }}
+        >
+          <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
+            <Clerkprovider>
+              <BrowserRouter>
+                <Navbar navref={navref} />
+
+                <Routes>
+                  <Route
+                    path="/"
+                    element={
+                      <AuthGuard>
+                        <Dashboard />
+                      </AuthGuard>
+                    }
+                  />
+                  <Route
+                    path="/designview"
+                    element={
+                      <AuthGuard>
+                        <Suspense fallback={<Loader />}>
+                          <Designviewer mobref={mobMapRef} lapref={lapMapRef} />
+                        </Suspense>
+                      </AuthGuard>
+                    }
+                  />
+                  <Route path="/signin" element={<Cusatemsignin />} />
+                  <Route path="/signup" element={<Custemsignup />} />
+                  <Route
+                    path="/project/:id"
+                    element={
+                      <AuthGuard>
+                        <DragableBox
+                          recentscountref={recentscountref}
+                          currenthistoryref={currenthistoryref}
+                          checkedasmobile={checkedasmobile}
+                          setcheckedasmobile={setcheckedasmobile}
+                          navref={navref}
+                        ></DragableBox>
+                      </AuthGuard>
+                    }
+                  />
+                </Routes>
+                <Footer />
+              </BrowserRouter>
+            </Clerkprovider>
+          </ThemeProvider>
+        </NavContext.Provider>
+      </QueryClientProvider>
     </>
   );
 }

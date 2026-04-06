@@ -105,6 +105,45 @@ export function usemouse({
     return { value: 0, clienty: 0 };
   }
 
+  /**
+   * Returns true if `target` can legally accept `child` as a DOM child.
+   * Prevents invalid nesting like inserting a <div> inside <p> or any
+   * element inside <input>.
+   */
+  function canAcceptChild(target: Element, child: Element): boolean {
+    const targetTag = target.tagName.toUpperCase();
+    const childTag  = child.tagName.toUpperCase();
+
+    // 1. Void elements — can NEVER have children
+    const voidElements = new Set([
+      'AREA', 'BASE', 'BR', 'COL', 'EMBED', 'HR', 'IMG', 'INPUT',
+      'LINK', 'META', 'PARAM', 'SOURCE', 'TRACK', 'WBR',
+    ]);
+    if (voidElements.has(targetTag)) return false;
+
+    // 2. TEXTAREA / SELECT — no arbitrary element children
+    if (targetTag === 'TEXTAREA') return false;
+    if (targetTag === 'SELECT' &&
+        childTag !== 'OPTION' && childTag !== 'OPTGROUP') return false;
+
+    // 3. Phrasing-content containers — cannot hold block-level elements
+    const phrasingContainers = new Set([
+      'P', 'SPAN', 'A', 'LABEL', 'STRONG', 'EM', 'I', 'B', 'U',
+      'ABBR', 'CITE', 'CODE', 'KBD', 'MARK', 'S', 'SMALL',
+      'SUB', 'SUP', 'TIME', 'VAR', 'DFN',
+      'H1', 'H2', 'H3', 'H4', 'H5', 'H6',
+    ]);
+    const blockElements = new Set([
+      'DIV', 'SECTION', 'ARTICLE', 'MAIN', 'ASIDE', 'HEADER', 'FOOTER',
+      'NAV', 'FORM', 'TABLE', 'OL', 'UL', 'FIGURE', 'BLOCKQUOTE',
+      'PRE', 'FIELDSET', 'ADDRESS', 'DETAILS',
+      'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'P',
+    ]);
+    if (phrasingContainers.has(targetTag) && blockElements.has(childTag)) return false;
+
+    return true;
+  }
+
   function dragable(
     clickEl: HTMLElement,
     dragEl: HTMLElement,
@@ -169,6 +208,7 @@ export function usemouse({
         // Skip the dragged element itself (t, element) and guide lines (hrids)
         // so elementsFromPoint returns the actual container underneath.
         const elementgetfromxy = document.elementsFromPoint(clientx as number, clienty as number).find(el => {
+          console.log(el,"is slllll")
           if (
             el !== t &&
             el !== element &&
@@ -176,7 +216,7 @@ export function usemouse({
             el.id !== "navbar" &&
             el.id !== "root" &&
             el.tagName !== "HTML" &&
-            !el.classList.contains("hrids")
+            !el.classList.contains("hrids") && el.id !="devrect"
           ) {
             return true;
           }
@@ -399,6 +439,54 @@ export function usemouse({
           );
           t.style.left = mobilevviewleft + clampedX + "px";
 
+console.log(elementgetfromxy?.id,"gerredelemnentrxuy")
+     const childEl = document.querySelector(`[data-name="${p.id}child"]`);
+   const validTarget =
+            elementgetfromxy && elementgetfromxy.id !=="divrect" &&
+              elementgetfromxy.id !== p.id &&
+              elementgetfromxy.id !== "body" &&
+              elementgetfromxy.id !== "navbar" &&
+              elementgetfromxy.id !== "root" && !elementgetfromxy.classList.contains("hrids") &&
+              elementgetfromxy !== element &&
+              elementgetfromxy !== t &&
+              // Only allow if the target can legally accept this child
+              canAcceptChild(elementgetfromxy, element)
+              ? elementgetfromxy
+              : null;
+
+console.log(validTarget,"iss. erlementxtxyyy",childEl)
+if (childEl) {
+  if (validTarget) {
+         const isDescendant = childEl.contains(validTarget);
+
+ if (!isDescendant && validTarget !== currentDropTarget) {
+      if (currentDropTarget) {
+                  t.appendChild(childEl);
+                }
+
+ (childEl as HTMLElement).style.position="static";
+(childEl as HTMLElement).style.left="0px";
+(childEl as HTMLElement).style.top="0px";
+                (validTarget as HTMLElement).appendChild(childEl);
+   currentDropTarget = validTarget;
+                setrecentelement(p.id as string);
+                 element.onmousedown = start_drag;
+                console.log("Inserted into:", validTarget.id || validTarget.tagName);
+
+ }
+
+  }else{
+
+
+                  if (currentDropTarget) {
+                t.appendChild(childEl);
+                currentDropTarget = null;
+                // Child is back in t — drag is handled by p.onmousedown, not element
+                element.onmousedown = null;
+                console.log("Restored to original wrapper");
+              }
+  }
+}
           //sertting old mob object
 
           let oldmobmapobj = { ...objset }
@@ -411,8 +499,14 @@ export function usemouse({
           //sertting old mob object
 
 
+
+
+
+
           if (buttonmob) {
-            let mobileobjsearr: Record<string, string> = { ...objset }
+
+
+let mobileobjsearr: Record<string, string> = { ...objset }
             if ("width" in mobileobjsearr) {
               if (!mobileobjsearr?.width.includes("vw") && "width" in mobileobjsearr) {
                 let mobilex = mobileik.x / 100
@@ -431,12 +525,12 @@ export function usemouse({
             mobileobjsearr.top = "0"
 
             // console.log(leftformobile,"isss mob111bbbbb")
-            buttonmob.style.top = (cury / window.innerHeight) * 100 + "%"
+            // buttonmob.style.top = (cury / window.innerHeight) * 100 + "%"
             mobileobjsearr.top = (cury / window.innerHeight) * 100 + "%"
 
 
             let leftPercent = (clampedX / mobileik.x) * 100;
-            buttonmob.style.left = leftformobile + "%"
+            // buttonmob.style.left = leftformobile + "%"
             // console.log(leftPercent,"is tye left in leeeeeeee")
             mobileobjsearr.left = leftPercent + "%";
             if (leftformobile > 0) { // it is used to set the make the leftvalues crt
@@ -615,9 +709,11 @@ export function usemouse({
               elementgetfromxy.id !== p.id &&
               elementgetfromxy.id !== "body" &&
               elementgetfromxy.id !== "navbar" &&
-              elementgetfromxy.id !== "root" &&  !elementgetfromxy.classList.contains("hrids") &&
+              elementgetfromxy.id !== "root" && !elementgetfromxy.classList.contains("hrids") &&
               elementgetfromxy !== element &&
-              elementgetfromxy !== t
+              elementgetfromxy !== t &&
+              // Only allow if the target can legally accept this child
+              canAcceptChild(elementgetfromxy, element)
               ? elementgetfromxy
               : null;
 

@@ -597,34 +597,37 @@ export function usemouse({
 
           // 4. Update visual position (t.style)
           // We divide by window dimensions and multiply by 100 to get the % for CSS
+          element.style.pointerEvents = "none";
+          t.style.pointerEvents = "none"
 
-
-
-          if (elementgetfromxy) {
+          if (elementgetfromxy && elementgetfromxy.id != p.id && elementgetfromxy.id != "body" && elementgetfromxy.id != t.id && elementgetfromxy.id != "navbar") {
 
             console.log(elementgetfromxy, "is slellele", p.id, "is slemets")
-            // if (elementgetfromxy.id != "body") {
             const el = document.querySelector(`[data-name="${p.id}child"]`);
             if (el) {
-              elementgetfromxy.appendChild(el)
-              setrecentelement(p.id as string)
+              // Guard: prevent HierarchyRequestError
+              // Do NOT append if the drop target is inside the element being moved,
+              // or if the drop target IS the draggable wrapper / content element itself.
+              const isDescendant = el.contains(elementgetfromxy);
+              const isSelf = elementgetfromxy === element || elementgetfromxy === t;
+              console.log(elementgetfromxy, "is elementgetfromxy", el, "is el", p.id, "is p.id", isSelf, "devcentr", isDescendant);
+              if (!isDescendant && !isSelf) {
+
+                (elementgetfromxy as HTMLElement).appendChild(el);
+                setrecentelement(p.id as string);
+              } else {
+                // Drop target is inside the dragged element — just follow the mouse
+                t.style.left = (centeredX / window.innerWidth) * 100 + "%";
+                t.style.top = (centeredY / document.documentElement.clientHeight) * 100 + "%";
+                if (!lapview.current.children.includes(p.id as string)) {
+                  lapview.current.children.push(p.id as string);
+                }
+              }
             }
-            // } else {
-
-
-
-
-            // }
-
-
-
-
-
 
           } else {
             t.style.left = (centeredX / window.innerWidth) * 100 + "%";
             t.style.top = (centeredY / document.documentElement.clientHeight) * 100 + "%";
-
 
             if (!lapview.current.children.includes(p.id as string)) {
               lapview.current.children.push(p.id as string)
@@ -675,11 +678,13 @@ export function usemouse({
 
         if (x.value != offsetX || y != offsetY) {
           // console.log("calllllleddd","x",x,"y",y,"annnddd",offsetX,"y:",offsetY)
-          // move(x, y)
+
           offsetX = x.value;
           offsetY = y.value;
           clientx = e.clientX;
           clienty = e.clientY;
+          move(offsetX, offsetY);
+
         }
 
         return false;
@@ -689,7 +694,8 @@ export function usemouse({
         //  )
         // console.log("dragged start",p.dataset.name)
         setslecetdelemnt(p.dataset.name as string)
-
+        element.style.zIndex = "1000";
+        t.style.zIndex = "1000"
         hr.style.display = "block";
         hr2.style.display = "block";
         hr3.style.display = "block";
@@ -715,8 +721,11 @@ export function usemouse({
 
         console.log(clientx, clienty, "is clientx and clienty")
 
-        move(offsetX, offsetY);
+        // move(offsetX, offsetY);
         currenthistoryref.current++
+        element.style.pointerEvents = "auto";
+
+        t.style.pointerEvents = "auto";
 
         recentscountref.current = currenthistoryref.current
         console.log(recentscountref, "is countref", currenthistoryref)

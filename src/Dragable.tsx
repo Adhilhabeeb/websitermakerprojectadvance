@@ -566,7 +566,7 @@ function DragableBox(props: any) {
     < >
 
 
-      <div className='w-full absolute to-0%  flex justify-around h-9'>
+      {showpanel && <div className='w-full absolute to-0%  flex justify-around h-9'>
 
         {showpanel && <Leftchanging addbbutton={addbbutton} setshowpanel={setshowpanel} />}
 
@@ -579,7 +579,7 @@ function DragableBox(props: any) {
                    focus:outline-none focus:ring-2 focus:ring-blue-500"
       /> */}
       </div>
-
+      }
 
 
       <div id='divrect' style={{

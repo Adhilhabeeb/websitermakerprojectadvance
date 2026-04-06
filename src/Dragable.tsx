@@ -412,7 +412,7 @@ function DragableBox(props: any) {
 
     })
 
-    button.style.position = "absolute";
+    // button.style.position = "absolute";
 
 
 
@@ -462,6 +462,7 @@ function DragableBox(props: any) {
     hr.style.zIndex = "87999";
 
     hr.id = "hrids  hrtop"
+    hr.className="hrids"
     let hr2 = document.createElement("div")
     hr2.style.backgroundColor = "blue"
     hr2.style.width = "1000px"
@@ -471,6 +472,7 @@ function DragableBox(props: any) {
     hr2.style.left = "0px";
     hr2.style.top = "0px";
     hr2.id = "hrids hrbottom"
+        hr2.className="hrids"
     hr2.style.zIndex = "87999";
 
     let hr3 = document.createElement("div")
@@ -483,6 +485,7 @@ function DragableBox(props: any) {
     hr3.style.top = "0px";
     hr3.id = "hrids hrleft"
     hr3.style.zIndex = "87999";
+        hr3.className="hrids"
     let hr4 = document.createElement("div")
     hr4.style.backgroundColor = "violet"
     hr4.style.width = "1px"
@@ -493,7 +496,7 @@ function DragableBox(props: any) {
     hr4.style.top = "0px";
     hr4.id = "hrids hrright"
     hr4.style.zIndex = "87999";
-
+        hr4.className="hrids"
 
     let div = document.createElement("div")
 

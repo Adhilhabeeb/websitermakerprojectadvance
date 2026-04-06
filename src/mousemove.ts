@@ -47,7 +47,7 @@ export function usemouse({
   }, [checkedasmobile]);
 
   useEffect(() => {
-    alert(recentelement)
+    console.log(recentelement, "is recent element")
   }, [recentelement]);
 
 
@@ -156,6 +156,8 @@ export function usemouse({
     if (t) {
       let oldobj: any;
       let oldmobobj: any;
+      // Tracks which container the child is currently inserted into during drag
+      let currentDropTarget: Element | null = null;
       var move = function (x: any, y: any) {
 
         // console.log("x:",x,"y:",y)
@@ -167,15 +169,23 @@ export function usemouse({
 
         console.log(clientx, "is clientxxx", clienty, "is client yuuuuuuu")
 
+        // Skip the dragged element itself (t, element) and guide lines (hrids)
+        // so elementsFromPoint returns the actual container underneath.
         const elementgetfromxy = document.elementsFromPoint(clientx as number, clienty as number).find(el => {
-          console.log("elemnetinlopp", el)
-          if (el.id != "body" && el.id != "navbar" && el.tagName != "HTML" && el.id != "root") {
-            console.log("is tyehe loememet", el)
-            return el
+          if (
+            el !== t &&
+            el !== element &&
+            el.id !== "body" &&
+            el.id !== "navbar" &&
+            el.id !== "root" &&
+            el.tagName !== "HTML" &&
+            !el.classList.contains("hrids")
+          ) {
+            return true;
           }
-          return null
-        })
-        console.log(elementgetfromxy, "is slememeyyyy333y.  gg:")
+          return false;
+        });
+        console.log(elementgetfromxy, "is elementgetfromxy");
 
         let elemt: string = p.dataset.name?.split("").filter(el => !isStringInteger(el)).join("") as string
 
@@ -595,43 +605,66 @@ export function usemouse({
             Math.min(y - halfH, document.documentElement.clientHeight)
           );
 
-          // 4. Update visual position (t.style)
-          // We divide by window dimensions and multiply by 100 to get the % for CSS
-          element.style.pointerEvents = "none";
-          t.style.pointerEvents = "none"
+          // 4. Always move the wrapper with the mouse so the drag feels live
+          t.style.left = (centeredX / window.innerWidth) * 100 + "%";
+          t.style.top = (centeredY / document.documentElement.clientHeight) * 100 + "%";
 
-          if (elementgetfromxy && elementgetfromxy.id != p.id && elementgetfromxy.id != "body" && elementgetfromxy.id != t.id && elementgetfromxy.id != "navbar") {
+          // Find the child element (the actual content node)
+          const childEl = document.querySelector(`[data-name="${p.id}child"]`);
 
-            console.log(elementgetfromxy, "is slellele", p.id, "is slemets")
-            const el = document.querySelector(`[data-name="${p.id}child"]`);
-            if (el) {
-              // Guard: prevent HierarchyRequestError
-              // Do NOT append if the drop target is inside the element being moved,
-              // or if the drop target IS the draggable wrapper / content element itself.
-              const isDescendant = el.contains(elementgetfromxy);
-              const isSelf = elementgetfromxy === element || elementgetfromxy === t;
-              console.log(elementgetfromxy, "is elementgetfromxy", el, "is el", p.id, "is p.id", isSelf, "devcentr", isDescendant);
-              if (!isDescendant && !isSelf) {
+          // Determine whether the cursor is over a valid, different container
+          const validTarget =
+            elementgetfromxy &&
+              elementgetfromxy.id !== p.id &&
+              elementgetfromxy.id !== "body" &&
+              elementgetfromxy.id !== "navbar" &&
+              elementgetfromxy.id !== "root" &&  !elementgetfromxy.classList.contains("hrids") &&
+              elementgetfromxy !== element &&
+              elementgetfromxy !== t
+              ? elementgetfromxy
+              : null;
 
-                (elementgetfromxy as HTMLElement).appendChild(el);
-                setrecentelement(p.id as string);
-              } else {
-                // Drop target is inside the dragged element — just follow the mouse
-                t.style.left = (centeredX / window.innerWidth) * 100 + "%";
-                t.style.top = (centeredY / document.documentElement.clientHeight) * 100 + "%";
-                if (!lapview.current.children.includes(p.id as string)) {
-                  lapview.current.children.push(p.id as string);
+          if (childEl) {
+            if (validTarget) {
+
+
+
+       console.log(validTarget,"is valiedtarget",childEl,"is child")
+              // Safety: do NOT append if target is inside the child (HierarchyRequestError guard)
+              const isDescendant = childEl.contains(validTarget);
+
+              if (!isDescendant && validTarget !== currentDropTarget) {
+                // Moving to a new container — restore child to t first, then insert
+                if (currentDropTarget) {
+                  t.appendChild(childEl);
                 }
+                (childEl as HTMLElement).style.position="static";
+(childEl as HTMLElement).style.left="0px";
+(childEl as HTMLElement).style.top="0px";
+                (validTarget as HTMLElement).appendChild(childEl);
+                currentDropTarget = validTarget;
+                setrecentelement(p.id as string);
+                // Allow user to click the element from within the container to start a drag
+                element.onmousedown = start_drag;
+                console.log("Inserted into:", validTarget.id || validTarget.tagName);
+              }
+              // (if still in same validTarget, do nothing — it's already there)
+            } else {
+
+            console.log("illla")
+              // Cursor not over any valid container — restore child back into wrapper t
+              if (currentDropTarget) {
+                t.appendChild(childEl);
+                currentDropTarget = null;
+                // Child is back in t — drag is handled by p.onmousedown, not element
+                element.onmousedown = null;
+                console.log("Restored to original wrapper");
               }
             }
+          }
 
-          } else {
-            t.style.left = (centeredX / window.innerWidth) * 100 + "%";
-            t.style.top = (centeredY / document.documentElement.clientHeight) * 100 + "%";
-
-            if (!lapview.current.children.includes(p.id as string)) {
-              lapview.current.children.push(p.id as string)
-            }
+          if (!lapview.current.children.includes(p.id as string)) {
+            lapview.current.children.push(p.id as string);
           }
 
           // 5. Store in lapobject (Relative to the navbar)
@@ -656,7 +689,7 @@ export function usemouse({
           hr2.style.left = -(parseInt(hr.style.width) / 2) + "px";
           hr3.style.top = -(parseInt(hr3.style.height) / 2) + "px";
           hr4.style.top = -(parseInt(hr4.style.height) / 2) + "px";
-          hr4.style.left = elemntrect.width + 9 + "px";
+          hr4.style.left = elemntrect.width + "px";
           console.log(elemntrect.width, "is hr4")
         }
       };
@@ -690,26 +723,35 @@ export function usemouse({
         return false;
       };
       var start_drag = function (e: any) {
-        //  console.log(setslecetdelemnt,"is seteleent",p.dataset.name
-        //  )
-        // console.log("dragged start",p.dataset.name)
         setslecetdelemnt(p.dataset.name as string)
-        element.style.zIndex = "1000";
-        t.style.zIndex = "1000"
+
+        // ── Restore child from container ───────────────────────────────────────
+        // If the child was dropped into a container in a previous drag, pull it
+        // back into t so we can drag it freely again.
+
+        const childEl = document.querySelector(`[data-name="${p.id}child"]`);
+        if (childEl && childEl.parentElement !== t) {
+          console.log("Restoring child from container back to wrapper t");
+          t.appendChild(childEl);
+          currentDropTarget = null;
+          // Child is back in t — only the wrapper p handles drag, not element directly
+          element.onmousedown = null;
+        }
+        // ── Restore child from container ───────────────────────────────────────
+
+        // element.style.zIndex = "1000";
+        // t.style.zIndex = "1000"
         hr.style.display = "block";
         hr2.style.display = "block";
         hr3.style.display = "block";
         hr4.style.display = "block";
 
-        // console.log("onmousedown")
         e = e || window.event;
 
         offsetX = mouseX(e).value;
         offsetY = mouseY(e).value;
-        // console.log("offsetxx",offsetX,"offsety",offsetY)
-        drag = true; // basically we're using this to detect dragging
+        drag = true;
 
-        // save any previous mousemove event handler:
         if (document.body.onmousemove) {
           mousemoveTemp = document.onmousemove;
         }
@@ -718,31 +760,44 @@ export function usemouse({
       };
       var stop_drag = function () {
 
-
         console.log(clientx, clienty, "is clientx and clienty")
+        element.style.zIndex = "10";
+        t.style.zIndex = "10"
+        // ── Finalize drop ─────────────────────────────────────────────────────
+        // Child is now permanently inside the container.
+        // We do NOT remove t — it stays on the body so the user can
+        // drag this element again later. On next start_drag, the child
+        // will be restored from the container back into t automatically.
+        if (!ismobilevalue.current) {
+          if (currentDropTarget) {
+            // Child ended up in a container — keep element.onmousedown active
+            // so the user can click the element from inside the container to drag it again.
+            element.onmousedown = start_drag;
+          } else {
+            // Child is back on the body inside t — clear the direct listener.
+            element.onmousedown = null;
+          }
+          currentDropTarget = null; // reset — the drop is finalized
+        }
+        // ── Finalize drop ─────────────────────────────────────────────────────
 
-        // move(offsetX, offsetY);
         currenthistoryref.current++
         element.style.pointerEvents = "auto";
-
         t.style.pointerEvents = "auto";
 
         recentscountref.current = currenthistoryref.current
         console.log(recentscountref, "is countref", currenthistoryref)
         forceRender(prev => prev + 1)
 
-        //  console.log("onmouseuppp")
         hr.style.display = "none";
         hr2.style.display = "none";
         hr3.style.display = "none";
         hr4.style.display = "none";
 
         oldhrs.current?.forEach((el) => {
-          // console.log(el,"iisisisiisellkll")
           el.style.display = "none";
         });
         oldtobtm.current?.forEach((el) => {
-          // console.log(el,"iisisisiisellkll")
           el.style.display = "none";
         });
         oldhrs.current = null;
@@ -762,8 +817,17 @@ export function usemouse({
         p.onpointerup = stop_drag
       } else {
         p.onmousedown = start_drag;
-        // p.onmouseup = stop_drag;
+        // stop_drag is registered on document.body inside mouseMoveHandler
+        // so it fires wherever the user releases the mouse (not just on p).
       }
+
+      // Attach stop_drag to document.body so releasing the mouse anywhere
+      // (body, container, another element) finalises the drop correctly.
+      document.body.onmouseup = function () {
+        if (drag) {
+          stop_drag();
+        }
+      };
 
       document.addEventListener("keydown", (event) => {
 

@@ -121,12 +121,6 @@ export function usemouse({
     navref: React.RefObject<HTMLDivElement | null>,
     lapref: Map<string, any>,
     oldmobmap: Map<string, any>,
-
-
-
-
-
-
   ) {
 
     let clientx: number | null = null
@@ -158,6 +152,9 @@ export function usemouse({
       let oldmobobj: any;
       // Tracks which container the child is currently inserted into during drag
       let currentDropTarget: Element | null = null;
+      // isSelected: true while this element is the active dragged/selected element
+      let isSelected = false;
+
       var move = function (x: any, y: any) {
 
         // console.log("x:",x,"y:",y)
@@ -726,21 +723,16 @@ export function usemouse({
         setslecetdelemnt(p.dataset.name as string)
 
         // ── Restore child from container ───────────────────────────────────────
-        // If the child was dropped into a container in a previous drag, pull it
-        // back into t so we can drag it freely again.
-
         const childEl = document.querySelector(`[data-name="${p.id}child"]`);
         if (childEl && childEl.parentElement !== t) {
           console.log("Restoring child from container back to wrapper t");
           t.appendChild(childEl);
           currentDropTarget = null;
-          // Child is back in t — only the wrapper p handles drag, not element directly
           element.onmousedown = null;
         }
         // ── Restore child from container ───────────────────────────────────────
 
-        // element.style.zIndex = "1000";
-        // t.style.zIndex = "1000"
+        isSelected = true;
         hr.style.display = "block";
         hr2.style.display = "block";
         hr3.style.display = "block";
@@ -763,6 +755,8 @@ export function usemouse({
         console.log(clientx, clienty, "is clientx and clienty")
         element.style.zIndex = "10";
         t.style.zIndex = "10"
+        isSelected = false;
+
         // ── Finalize drop ─────────────────────────────────────────────────────
         // Child is now permanently inside the container.
         // We do NOT remove t — it stays on the body so the user can
@@ -831,12 +825,27 @@ export function usemouse({
 
       document.addEventListener("keydown", (event) => {
 
+        // Space: stop drag
         if (event.key === " ") {
           if (drag) {
             let activeelemt = document.activeElement as HTMLElement;
             activeelemt?.blur()
-            // alert("ooo")
             stop_drag();
+          }
+        }
+
+        // Shift + Backspace: delete the selected element
+        if (event.shiftKey && event.key === "Backspace") {
+          if (isSelected) {
+            event.preventDefault();
+            if (drag) stop_drag(); // stop any active drag first
+            const childToRemove = document.querySelector(`[data-name="${p.id}child"]`);
+            childToRemove?.remove();
+            t.remove();
+            lapref.delete(p.id);
+            mapref.delete(p.id);
+            isSelected = false;
+            setslecetdelemnt(null);
           }
         }
       });

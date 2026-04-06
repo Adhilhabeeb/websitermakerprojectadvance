@@ -5,6 +5,15 @@
 
 @custom-variant dark (&:is(.dark *));
 
+
+.material-symbols-outlined {
+  font-variation-settings:
+  'FILL' 0,
+  'wght' 400,
+  'GRAD' 0,
+  'opsz' 24
+}
+
 body{
   min-height: 100vh;
 z-index: -97976978 !important;

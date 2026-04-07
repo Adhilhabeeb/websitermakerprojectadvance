@@ -17,7 +17,7 @@ interface dragboxprop {
 function DragableBox(props: any) {
   let { id } = useParams()
   let location = useLocation()
-  let { lapview, showpanel, setshowpanel, sethandleecentfunction, forceRender, setshowsidemenu, showsidemenu, slecetdelemnt, setslecetdelemnt, mobMapRef, lapMapRef, historytmapref, mobileoldmapstoreing, mode, hierarchyMapRef } = useContext<Contextapptype>(NavContext as any)
+  let { lapview, showpanel, setshowpanel, sethandleecentfunction, forceRender, setshowsidemenu, showsidemenu, slecetdelemnt, setslecetdelemnt, mobMapRef, lapMapRef, historytmapref, mobileoldmapstoreing, mode, hierarchyMapRef, mobileHierarchyMapRef } = useContext<Contextapptype>(NavContext as any)
 
   let { checkedasmobile, navref, currenthistoryref, recentscountref, setcheckedasmobile } = props
 
@@ -390,7 +390,14 @@ function DragableBox(props: any) {
 
 
     button.id = data?.name ?? ele + countref.current.toString()
+ 
+
+if (checkedasmobile) {
+
+    mobileHierarchyMapRef.current.set(button.id, { name: button.id, childrens: [] });
+}else{
     hierarchyMapRef.current.set(button.id, { name: button.id, childrens: [] });
+}
     button.dataset.name = data?.name
       ? data?.name + "child"
       : ele + countref.current.toString() + "child";
@@ -518,7 +525,7 @@ function DragableBox(props: any) {
     document.body.appendChild(div)
     setslecetdelemnt(div.dataset.name)
     console.log(currenthistoryref.current, "in histoy")
-    move(div, div, hr, hr2, hr3, hr4, setaray, button, checkedasmobile, setslecetdelemnt, setmobarr.current, mapref, navref, lapref, oldmobmap, hierarchyMapRef.current)
+    move(div, div, hr, hr2, hr3, hr4, setaray, button, checkedasmobile, setslecetdelemnt, setmobarr.current, mapref, navref, lapref, oldmobmap, hierarchyMapRef.current, mobileHierarchyMapRef.current)
 
 
     console.log(lapref, "after adding button ")

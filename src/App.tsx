@@ -51,6 +51,7 @@ export type storedvalkuetype = {
 }
 export interface Contextapptype {
   hierarchyMapRef: React.RefObject<Map<string, { name: string; childrens: string[] }>>
+  mobileHierarchyMapRef: React.RefObject<Map<string, { name: string; childrens: string[] }>>
   recentelement: string | null;
   setrecentelement: React.Dispatch<SetStateAction<string | null>>;
   checkedasmobile: boolean;
@@ -99,6 +100,7 @@ let lengh = 10;
 
 function App() {
   const hierarchyMapRef = useRef<Map<string, { name: string; childrens: string[] }>>(new Map());
+  const mobileHierarchyMapRef = useRef<Map<string, { name: string; childrens: string[] }>>(new Map());
 
   let lapview = useRef<storedvalkuetype>({
     styles: {},
@@ -281,7 +283,7 @@ handleclick()
             mobMapRef,
             lapMapRef,
             historytmapref,
-            mobileoldmapstoreing, setMode, mode, lapview, stylesmap, setparent, parent, recentelement, setrecentelement,hierarchyMapRef
+            mobileoldmapstoreing, setMode, mode, lapview, stylesmap, setparent, parent, recentelement, setrecentelement, hierarchyMapRef, mobileHierarchyMapRef
           }}
         >
           <ThemeProvider attribute="class" defaultTheme="light" enableSystem>

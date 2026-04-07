@@ -162,6 +162,7 @@ export function usemouse({
     lapref: Map<string, any>,
     oldmobmap: Map<string, any>,
     hierarchyMap: Map<string, { name: string; childrens: string[] }>,
+    mobileHierarchyMap: Map<string, { name: string; childrens: string[] }>,
   ) {
 
     let clientx: number | null = null
@@ -471,7 +472,14 @@ if (childEl) {
 (childEl as HTMLElement).style.top="0px";
                 (validTarget as HTMLElement).appendChild(childEl);
                 currentDropTarget = validTarget;
-        
+
+                // Update mobile hierarchy map
+                const mobileTargetEntry = mobileHierarchyMap.get(validTarget.id);
+                if (mobileTargetEntry && !mobileTargetEntry.childrens.includes(p.id)) {
+                  mobileTargetEntry.childrens.push(p.id);
+                }
+                console.log(mobileTargetEntry, "is mobileHierarchy after append", mobileHierarchyMap);
+
                 setrecentelement(p.id as string);
                  element.onmousedown = start_drag;
                 console.log("Inserted into:", validTarget.id || validTarget.tagName);
@@ -482,7 +490,13 @@ if (childEl) {
 
 
                   if (currentDropTarget) {
-                t.appendChild(childEl);
+             
+                // Update mobile hierarchy map — remove from old parent
+                const mobileTargetEntry = mobileHierarchyMap.get(currentDropTarget.id);
+                if (mobileTargetEntry && mobileTargetEntry.childrens.includes(p.id)) {
+                  mobileTargetEntry.childrens = mobileTargetEntry.childrens.filter((el: any) => el !== p.id);
+                } 
+              t.appendChild(childEl);
                 currentDropTarget = null;
                 // Child is back in t — drag is handled by p.onmousedown, not element
                 element.onmousedown = null;
@@ -854,22 +868,22 @@ let mobileobjsearr: Record<string, string> = { ...objset }
           console.log("Restoring child from container back to wrapper t",currentDropTarget,"is currentDropTarget",childEl.parentElement,"is parent id");
    
           if(childEl.parentElement){
+            // Desktop hierarchy
             const targetEntry = hierarchyMap.get(childEl.parentElement.id);
             console.log(targetEntry,"is beforechanging")
                 if (targetEntry && targetEntry.childrens.includes(p.id)) {
                  console.log("omddd",p.id,targetEntry)
                   targetEntry.childrens=targetEntry.childrens.filter((el:any)=>el!==p.id);
                 }
-
                 console.log(targetEntry,"is aftercghanging")
+
+            // Mobile hierarchy
+            const mobileTargetEntry = mobileHierarchyMap.get(childEl.parentElement.id);
+            if (mobileTargetEntry && mobileTargetEntry.childrens.includes(p.id)) {
+              mobileTargetEntry.childrens = mobileTargetEntry.childrens.filter((el: any) => el !== p.id);
+            }
           }
-              // const targetEntry = hierarchyMap.get(currentDropTarget.id);
-              //   if (targetEntry && targetEntry.childrens.includes(p.id)) {
-                 
-              //     targetEntry.childrens=targetEntry.childrens.filter((el:any)=>el!==p.id);
-              //   }
-//  console.log(targetEntry,"is afterremoving targetentry")
-       t.appendChild(childEl);
+          t.appendChild(childEl);
           currentDropTarget = null;
           element.onmousedown = null;
         }
@@ -894,7 +908,7 @@ let mobileobjsearr: Record<string, string> = { ...objset }
         return false;
       };
       var stop_drag = function () {
-console.log(hierarchyMap,"hierarchyinstop")
+console.log(hierarchyMap,"hierarchyinstop",mobileHierarchyMap,"is mobileHierarchyMap")
         console.log(clientx, clienty, "is clientx and clienty")
         element.style.zIndex = "10";
         t.style.zIndex = "10"
@@ -983,10 +997,28 @@ console.log(hierarchyMap,"hierarchyinstop")
             event.preventDefault();
             if (drag) stop_drag(); // stop any active drag first
             const childToRemove = document.querySelector(`[data-name="${p.id}child"]`);
+
+            // Also remove from parent hierarchy if it's nested
+            if (childToRemove && childToRemove.parentElement) {
+              const parentId = childToRemove.parentElement.id;
+              
+              const targetEntry = hierarchyMap.get(parentId);
+              if (targetEntry && targetEntry.childrens.includes(p.id)) {
+                targetEntry.childrens = targetEntry.childrens.filter((el:any) => el !== p.id);
+              }
+
+              const mobileTargetEntry = mobileHierarchyMap.get(parentId);
+              if (mobileTargetEntry && mobileTargetEntry.childrens.includes(p.id)) {
+                mobileTargetEntry.childrens = mobileTargetEntry.childrens.filter((el:any) => el !== p.id);
+              }
+            }
+
             childToRemove?.remove();
             t.remove();
             lapref.delete(p.id);
             mapref.delete(p.id);
+            hierarchyMap.delete(p.id);
+            mobileHierarchyMap.delete(p.id);
             isSelected = false;
             setslecetdelemnt(null);
           }

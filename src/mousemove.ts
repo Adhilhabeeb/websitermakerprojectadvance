@@ -9,7 +9,7 @@ export function usemouse({
   buttonlap,
   buttonmob,
   checkedasmobile,
-  divmobilebg, currenthistoryref, recentscountref, forceRender
+  divmobilebg, currenthistoryref, recentscountref, forceRender, hierarchyMapRef
 }: {
   buttonlap?: HTMLButtonElement;
   buttonmob?: HTMLElement;
@@ -18,6 +18,7 @@ export function usemouse({
   recentscountref: React.RefObject<number>
   forceRender: React.Dispatch<SetStateAction<number>>
   divmobilebg?: React.RefObject<HTMLDivElement | null>;
+  hierarchyMapRef: React.RefObject<Map<string, { name: string; childrens: string[] }>>;
 
 
 
@@ -160,6 +161,7 @@ export function usemouse({
     navref: React.RefObject<HTMLDivElement | null>,
     lapref: Map<string, any>,
     oldmobmap: Map<string, any>,
+    hierarchyMap: Map<string, { name: string; childrens: string[] }>,
   ) {
 
     let clientx: number | null = null
@@ -468,7 +470,8 @@ if (childEl) {
 (childEl as HTMLElement).style.left="0px";
 (childEl as HTMLElement).style.top="0px";
                 (validTarget as HTMLElement).appendChild(childEl);
-   currentDropTarget = validTarget;
+                currentDropTarget = validTarget;
+        
                 setrecentelement(p.id as string);
                  element.onmousedown = start_drag;
                 console.log("Inserted into:", validTarget.id || validTarget.tagName);
@@ -734,8 +737,28 @@ let mobileobjsearr: Record<string, string> = { ...objset }
                 (childEl as HTMLElement).style.position="static";
 (childEl as HTMLElement).style.left="0px";
 (childEl as HTMLElement).style.top="0px";
+
+
+
+
+
+
+
+
+
+
                 (validTarget as HTMLElement).appendChild(childEl);
                 currentDropTarget = validTarget;
+
+                // Update hierarchy map
+                console.log(validTarget.id,"is validtarget id")
+                const targetEntry = hierarchyMap.get(validTarget.id);
+                if (targetEntry && !targetEntry.childrens.includes(p.id)) {
+                  targetEntry.childrens.push(p.id);
+                }
+
+
+                console.log(targetEntry,"is hirarchafterappend",hierarchyMap)
                 setrecentelement(p.id as string);
                 // Allow user to click the element from within the container to start a drag
                 element.onmousedown = start_drag;
@@ -748,7 +771,14 @@ let mobileobjsearr: Record<string, string> = { ...objset }
               // Cursor not over any valid container — restore child back into wrapper t
               if (currentDropTarget) {
                 t.appendChild(childEl);
+                  const targetEntry = hierarchyMap.get(currentDropTarget.id);
+                if (targetEntry && targetEntry.childrens.includes(p.id)) {
+                 console.log("its is intarget",targetEntry,p.id)
+                  targetEntry.childrens=targetEntry.childrens.filter((el:any)=>el!==p.id);
+                }
+ console.log(targetEntry,"is afterremoving targetentry")
                 currentDropTarget = null;
+               
                 // Child is back in t — drag is handled by p.onmousedown, not element
                 element.onmousedown = null;
                 console.log("Restored to original wrapper");
@@ -821,8 +851,25 @@ let mobileobjsearr: Record<string, string> = { ...objset }
         // ── Restore child from container ───────────────────────────────────────
         const childEl = document.querySelector(`[data-name="${p.id}child"]`);
         if (childEl && childEl.parentElement !== t) {
-          console.log("Restoring child from container back to wrapper t");
-          t.appendChild(childEl);
+          console.log("Restoring child from container back to wrapper t",currentDropTarget,"is currentDropTarget",childEl.parentElement,"is parent id");
+   
+          if(childEl.parentElement){
+            const targetEntry = hierarchyMap.get(childEl.parentElement.id);
+            console.log(targetEntry,"is beforechanging")
+                if (targetEntry && targetEntry.childrens.includes(p.id)) {
+                 console.log("omddd",p.id,targetEntry)
+                  targetEntry.childrens=targetEntry.childrens.filter((el:any)=>el!==p.id);
+                }
+
+                console.log(targetEntry,"is aftercghanging")
+          }
+              // const targetEntry = hierarchyMap.get(currentDropTarget.id);
+              //   if (targetEntry && targetEntry.childrens.includes(p.id)) {
+                 
+              //     targetEntry.childrens=targetEntry.childrens.filter((el:any)=>el!==p.id);
+              //   }
+//  console.log(targetEntry,"is afterremoving targetentry")
+       t.appendChild(childEl);
           currentDropTarget = null;
           element.onmousedown = null;
         }
@@ -847,7 +894,7 @@ let mobileobjsearr: Record<string, string> = { ...objset }
         return false;
       };
       var stop_drag = function () {
-
+console.log(hierarchyMap,"hierarchyinstop")
         console.log(clientx, clienty, "is clientx and clienty")
         element.style.zIndex = "10";
         t.style.zIndex = "10"

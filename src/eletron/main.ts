@@ -142,9 +142,20 @@ e.preventDefault()
   })
   tray.setContextMenu(contextMenu)
     if (Checkdev()) {
-        // if itis production mode we need t. show   hotreloads. when we are updating
-
-        mainwidth.loadURL("http://localhost:5123/");
+        // Retry loading until Vite dev server is ready
+        const tryLoad = async (retries = 10, delay = 1000) => {
+            for (let i = 0; i < retries; i++) {
+                try {
+                    await mainwidth.loadURL("http://localhost:5123/");
+                    return;
+                } catch (err) {
+                    console.log(`Vite not ready yet, retrying in ${delay}ms... (${i + 1}/${retries})`);
+                    await new Promise(res => setTimeout(res, delay));
+                }
+            }
+            console.error("Failed to load Vite dev server after multiple retries.");
+        };
+        tryLoad();
     } else {
         mainwidth.loadFile(path.join(app.getAppPath(), "/distreactele/index.html"));
     }

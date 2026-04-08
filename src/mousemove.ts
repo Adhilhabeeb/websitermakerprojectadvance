@@ -1,56 +1,72 @@
-import { useCallback, useContext, useEffect, useMemo, useRef, useState, type Dispatch, type SetStateAction } from "react";
+import {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type Dispatch,
+  type SetStateAction,
+} from "react";
 import { isMobile } from "react-device-detect";
 import { clamp, isStringInteger, mobileik } from "./utils/vierw";
 import { cssdefalult, type eleent } from "./utils/cssdefault";
 import { NavContext } from "./App";
 
-
 export function usemouse({
   buttonlap,
   buttonmob,
   checkedasmobile,
-  divmobilebg, currenthistoryref, recentscountref, forceRender, hierarchyMapRef
+  divmobilebg,
+  currenthistoryref,
+  recentscountref,
+  forceRender,
+  hierarchyMapRef,
 }: {
   buttonlap?: HTMLButtonElement;
   buttonmob?: HTMLElement;
   checkedasmobile: Boolean;
-  currenthistoryref: React.RefObject<number>
-  recentscountref: React.RefObject<number>
-  forceRender: React.Dispatch<SetStateAction<number>>
+  currenthistoryref: React.RefObject<number>;
+  recentscountref: React.RefObject<number>;
+  forceRender: React.Dispatch<SetStateAction<number>>;
   divmobilebg?: React.RefObject<HTMLDivElement | null>;
-  hierarchyMapRef: React.RefObject<Map<string, { name: string; childrens: string[] }>>;
-
-
-
+  hierarchyMapRef: React.RefObject<
+    Map<string, { name: string; childrens: string[] }>
+  >;
 }) {
-
-
-
-  let context = useContext(NavContext)
+  let context = useContext(NavContext);
 
   if (!context) {
     throw new Error("ssry");
-
   }
   let interval: ReturnType<typeof setTimeout> | null = null;
-  let { mobMapRef, mobileoldmapstoreing, lapMapRef, lapview, setparent, parent, stylesmap, recentelement, setrecentelement } = context
-  let rectmobdiv = useRef(null)
+  let {
+    mobMapRef,
+    mobileoldmapstoreing,
+    lapMapRef,
+    lapview,
+    setparent,
+    parent,
+    stylesmap,
+    mobilestylesmap,
+    recentelement,
+    setrecentelement,
+  } = context;
+  let rectmobdiv = useRef(null);
   let ismobilevalue = useRef(checkedasmobile);
-  let currentrect = useRef<DOMRect | undefined>(null)
-
+  let currentrect = useRef<DOMRect | undefined>(null);
 
   useEffect(() => {
     ismobilevalue.current = checkedasmobile;
-    let div = divmobilebg?.current?.getBoundingClientRect()
+    let div = divmobilebg?.current?.getBoundingClientRect();
 
     // console.log("is the divvvv",div)
-    currentrect.current = div
+    currentrect.current = div;
   }, [checkedasmobile]);
 
   useEffect(() => {
-    console.log(recentelement, "is recent element")
+    console.log(recentelement, "is recent element");
   }, [recentelement]);
-
 
   // Source - https://stackoverflow.com/a
   // Posted by slebetman, modified by community. See post 'Timeline' for change history
@@ -71,36 +87,35 @@ export function usemouse({
     return el;
   }
 
-
-  function mouseX(e: MouseEvent): { value: number | null, clientx: number } {
-
+  function mouseX(e: MouseEvent): { value: number | null; clientx: number } {
     if (e.pageX) {
-
       return { value: e.pageX, clientx: e.clientX };
     }
     if (e.clientX) {
-
-
       return {
-        value: e.clientX +
+        value:
+          e.clientX +
           (document.documentElement.scrollLeft
             ? document.documentElement.scrollLeft
-            : document.body.scrollLeft), clientx: e.clientX
+            : document.body.scrollLeft),
+        clientx: e.clientX,
       };
     }
     return { value: 0, clientx: 0 };
   }
 
-  function mouseY(e: MouseEvent): { value: number | null, clienty: number } {
+  function mouseY(e: MouseEvent): { value: number | null; clienty: number } {
     if (e.pageY) {
       return { value: e.pageY, clienty: e.clientY };
     }
     if (e.clientY) {
       return {
-        value: e.clientY +
+        value:
+          e.clientY +
           (document.documentElement.scrollTop
             ? document.documentElement.scrollTop
-            : document.body.scrollTop), clienty: e.clientY
+            : document.body.scrollTop),
+        clienty: e.clientY,
       };
     }
     return { value: 0, clienty: 0 };
@@ -113,34 +128,95 @@ export function usemouse({
    */
   function canAcceptChild(target: Element, child: Element): boolean {
     const targetTag = target.tagName.toUpperCase();
-    const childTag  = child.tagName.toUpperCase();
+    const childTag = child.tagName.toUpperCase();
 
     // 1. Void elements — can NEVER have children
     const voidElements = new Set([
-      'AREA', 'BASE', 'BR', 'COL', 'EMBED', 'HR', 'IMG', 'INPUT',
-      'LINK', 'META', 'PARAM', 'SOURCE', 'TRACK', 'WBR',
+      "AREA",
+      "BASE",
+      "BR",
+      "COL",
+      "EMBED",
+      "HR",
+      "IMG",
+      "INPUT",
+      "LINK",
+      "META",
+      "PARAM",
+      "SOURCE",
+      "TRACK",
+      "WBR",
     ]);
     if (voidElements.has(targetTag)) return false;
 
     // 2. TEXTAREA / SELECT — no arbitrary element children
-    if (targetTag === 'TEXTAREA') return false;
-    if (targetTag === 'SELECT' &&
-        childTag !== 'OPTION' && childTag !== 'OPTGROUP') return false;
+    if (targetTag === "TEXTAREA") return false;
+    if (
+      targetTag === "SELECT" &&
+      childTag !== "OPTION" &&
+      childTag !== "OPTGROUP"
+    )
+      return false;
 
     // 3. Phrasing-content containers — cannot hold block-level elements
     const phrasingContainers = new Set([
-      'P', 'SPAN', 'A', 'LABEL', 'STRONG', 'EM', 'I', 'B', 'U',
-      'ABBR', 'CITE', 'CODE', 'KBD', 'MARK', 'S', 'SMALL',
-      'SUB', 'SUP', 'TIME', 'VAR', 'DFN',
-      'H1', 'H2', 'H3', 'H4', 'H5', 'H6',
+      "P",
+      "SPAN",
+      "A",
+      "LABEL",
+      "STRONG",
+      "EM",
+      "I",
+      "B",
+      "U",
+      "ABBR",
+      "CITE",
+      "CODE",
+      "KBD",
+      "MARK",
+      "S",
+      "SMALL",
+      "SUB",
+      "SUP",
+      "TIME",
+      "VAR",
+      "DFN",
+      "H1",
+      "H2",
+      "H3",
+      "H4",
+      "H5",
+      "H6",
     ]);
     const blockElements = new Set([
-      'DIV', 'SECTION', 'ARTICLE', 'MAIN', 'ASIDE', 'HEADER', 'FOOTER',
-      'NAV', 'FORM', 'TABLE', 'OL', 'UL', 'FIGURE', 'BLOCKQUOTE',
-      'PRE', 'FIELDSET', 'ADDRESS', 'DETAILS',
-      'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'P',
+      "DIV",
+      "SECTION",
+      "ARTICLE",
+      "MAIN",
+      "ASIDE",
+      "HEADER",
+      "FOOTER",
+      "NAV",
+      "FORM",
+      "TABLE",
+      "OL",
+      "UL",
+      "FIGURE",
+      "BLOCKQUOTE",
+      "PRE",
+      "FIELDSET",
+      "ADDRESS",
+      "DETAILS",
+      "H1",
+      "H2",
+      "H3",
+      "H4",
+      "H5",
+      "H6",
+      "P",
     ]);
-    if (phrasingContainers.has(targetTag) && blockElements.has(childTag)) return false;
+    if (phrasingContainers.has(targetTag) && blockElements.has(childTag))
+      return false;
 
     return true;
   }
@@ -164,19 +240,15 @@ export function usemouse({
     hierarchyMap: Map<string, { name: string; childrens: string[] }>,
     mobileHierarchyMap: Map<string, { name: string; childrens: string[] }>,
   ) {
-
-    let clientx: number | null = null
-    let clienty: number | null = null
+    let clientx: number | null = null;
+    let clienty: number | null = null;
     // console.log(mapref,"is mpref")
-    let navbar = navref.current
-    let navbarprops = navbar?.getBoundingClientRect().height as number
+    let navbar = navref.current;
+    let navbarprops = navbar?.getBoundingClientRect().height as number;
 
-
-
-    let topdivmob = currentrect.current?.top as number
-    let heightofmobiledesigner = currentrect?.current?.height as number
+    let topdivmob = currentrect.current?.top as number;
+    let heightofmobiledesigner = currentrect?.current?.height as number;
     //  console.log(currentrect.current,"is ccuuuuytyy in dg",topdivmob)
-
 
     var p: HTMLElement = get(clickEl);
     var t: HTMLElement = get(dragEl);
@@ -186,7 +258,6 @@ export function usemouse({
     let offsetX: any = 0;
     let offsetY: any = 0;
     var mousemoveTemp: any = null;
-
 
     // console.log("t:",t,"p:",p,element,"is teh elmey")
     if (t) {
@@ -198,7 +269,6 @@ export function usemouse({
       let isSelected = false;
 
       var move = function (x: any, y: any) {
-
         // console.log("x:",x,"y:",y)
         // console.log(
         //   ismobilevalue.current,
@@ -206,40 +276,42 @@ export function usemouse({
 
         // );
 
-        console.log(clientx, "is clientxxx", clienty, "is client yuuuuuuu")
+        console.log(clientx, "is clientxxx", clienty, "is client yuuuuuuu");
 
         // Skip the dragged element itself (t, element) and guide lines (hrids)
         // so elementsFromPoint returns the actual container underneath.
-        const elementgetfromxy = document.elementsFromPoint(clientx as number, clienty as number).find(el => {
-          console.log(el,"is slllll")
-          if (
-            el !== t &&
-            el !== element &&
-            el.id !== "body" &&
-            el.id !== "navbar" &&
-            el.id !== "root" &&
-            el.tagName !== "HTML" &&
-            !el.classList.contains("hrids") && el.id !="devrect"
-          ) {
-            return true;
-          }
-          return false;
-        });
+        const elementgetfromxy = document
+          .elementsFromPoint(clientx as number, clienty as number)
+          .find((el) => {
+            console.log(el, "is slllll");
+            if (
+              el !== t &&
+              el !== element &&
+              el.id !== "body" &&
+              el.id !== "navbar" &&
+              el.id !== "root" &&
+              el.tagName !== "HTML" &&
+              !el.classList.contains("hrids") &&
+              el.id != "devrect"
+            ) {
+              return true;
+            }
+            return false;
+          });
         console.log(elementgetfromxy, "is elementgetfromxy");
 
-        let elemt: string = p.dataset.name?.split("").filter(el => !isStringInteger(el)).join("") as string
-
+        let elemt: string = p.dataset.name
+          ?.split("")
+          .filter((el) => !isStringInteger(el))
+          .join("") as string;
 
         // console.log(elemt,"is elent")
         let keys = Object.entries(cssdefalult[elemt]).map((el: any) => {
-          let [name, value] = el
-          return [name, element.style[name]]
-
-        })
+          let [name, value] = el;
+          return [name, element.style[name]];
+        });
         // console.log("mobile:",mapref,"an lapp:",lapref)
-        let objectcustempro = Object.fromEntries(keys)
-
-
+        let objectcustempro = Object.fromEntries(keys);
 
         let objset = {
           name: p.dataset.name,
@@ -247,18 +319,14 @@ export function usemouse({
           right: p.style.right,
           top: p.style.top,
           bottom: p.style.bottom,
-          ...objectcustempro
+          ...objectcustempro,
         };
-
-
-
-
 
         // console.log(objset,"is objsetttt")
 
         // console.log(setar,"is setarray")
 
-        // check that the value is already in the set 
+        // check that the value is already in the set
         if (setar.has(JSON.stringify(objset))) {
           // console.log("ond")
           setar.delete(JSON.stringify(objset));
@@ -274,7 +342,7 @@ export function usemouse({
 
           // console.log("afterrii",setar)
         }
-        // check that the value is already in the set 
+        // check that the value is already in the set
 
         // if (setar.size > 0) {
         //   setar.forEach((el, i) => {
@@ -359,48 +427,45 @@ export function usemouse({
         // console.log(window.innerWidth)
         // let lefgtmove= x>document.documentElement.clientWidth-parseInt(t.style.width)?x-(parseInt(t.style.width))+"px":x+"px"
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////mobile
-        // importnt 
+        // importnt
         let vw = window.visualViewport?.width;
         let vh = window.visualViewport?.height;
         let ismobille = true;
-        let leftmarginspace = 2
+        let leftmarginspace = 2;
         let leftformobile =
-          ((x - leftmarginspace) / (mobileik.x)) * 100 - ((parseInt(element.style.width) / 4) / window.innerWidth) * 100
+          ((x - leftmarginspace) / mobileik.x) * 100 -
+          (parseInt(element.style.width) / 4 / window.innerWidth) * 100;
         // //  -
         // ;
 
-
-
         ////////////////////////////////////
-        //it ius theviewscape wvalues 
-        let mobilevviewleft = (window.innerWidth / 2) - (mobileik.x / 2)
-        let rightview = mobilevviewleft + mobileik.x
-        //it ius theviewscape wvalues 
+        //it ius theviewscape wvalues
+        let mobilevviewleft = window.innerWidth / 2 - mobileik.x / 2;
+        let rightview = mobilevviewleft + mobileik.x;
+        //it ius theviewscape wvalues
 
-        //letds crtreate  a div width exacty the mobile mobile wifth and height like 
+        //letds crtreate  a div width exacty the mobile mobile wifth and height like
 
-
-
-
-        //letds crtreate  a div width exacty the mobile mobile wifth and height like 
-
-
-
-
+        //letds crtreate  a div width exacty the mobile mobile wifth and height like
 
         // console.log(mobilevviewleft,"is ledt vieewrtyh",mobileik.x,"jk and right:",rightview)
-        let curx = x - mobilevviewleft
-        let elemntrect = element.getBoundingClientRect()
+        let curx = x - mobilevviewleft;
+        let elemntrect = element.getBoundingClientRect();
 
-        if (ismobilevalue.current && x > mobilevviewleft && x < rightview && y > topdivmob) {
+        if (
+          ismobilevalue.current &&
+          x > mobilevviewleft &&
+          x < rightview &&
+          y > topdivmob
+        ) {
           // console.log(heightofmobiledesigner,"is desiggneerrrr  height",y)
 
-          if (y > (heightofmobiledesigner - (elemntrect.height))) {
-
-            let heighmob = y + (elemntrect.height)
+          if (y > heightofmobiledesigner - elemntrect.height) {
+            let heighmob = y + elemntrect.height;
             // console.log("heightmob",heighmob,"jheigjt of elemt",element.style.height,"and  value is ",clamp(heighmob,mobileik.y,heighmob) +"px")
             if (divmobilebg?.current) {
-              divmobilebg.current.style.height = clamp(heighmob, mobileik.y, heighmob) + "px"
+              divmobilebg.current.style.height =
+                clamp(heighmob, mobileik.y, heighmob) + "px";
             }
           }
           // console.log(divmobilebg?.current,"is mmmmmmmmmm")
@@ -411,21 +476,22 @@ export function usemouse({
           // console.log(setmobarr,"is  when checkmobile is on array of mobile")
           // let y=cury
           // console.log(y,"is greterthan ",topdivmob,cury,"is curly and percenthre",(cury/window.innerHeight)*100)
-          let x = curx
+          let x = curx;
           // console.log(element.style.width,"is the element ewidth grtting in mouse move ")
           let leftformobile =
-            ((x - leftmarginspace) / (mobileik.x)) * 100 - ((elemntrect.width) / window.innerWidth) * 100
+            ((x - leftmarginspace) / mobileik.x) * 100 -
+            (elemntrect.width / window.innerWidth) * 100;
           // //  -
-          t.style.top = (y / window.innerHeight) * 100 + "%"
+          t.style.top = (y / window.innerHeight) * 100 + "%";
 
-          let elemtmovingleft = (x / window.innerWidth) * 100
-          let iffsetx = element.offsetWidth
-          let clampx = (mobilevviewleft + x) - (iffsetx / 2)
-          if (x > mobileik.x - (mobileik.x / 4)) {
-            clampx = (mobilevviewleft + x) - (iffsetx)
+          let elemtmovingleft = (x / window.innerWidth) * 100;
+          let iffsetx = element.offsetWidth;
+          let clampx = mobilevviewleft + x - iffsetx / 2;
+          if (x > mobileik.x - mobileik.x / 4) {
+            clampx = mobilevviewleft + x - iffsetx;
           }
-          if (x < (iffsetx / 2)) {
-            clampx = (mobilevviewleft + x)
+          if (x < iffsetx / 2) {
+            clampx = mobilevviewleft + x;
           }
 
           // clampx=Math.max(0,
@@ -436,151 +502,169 @@ export function usemouse({
           let elWidth = elemntrect.width;
 
           // clamp between 0 and mobile width
-          let clampedX = Math.max(
-            0,
-            Math.min(curx, mobileik.x - elWidth)
-          );
+          let clampedX = Math.max(0, Math.min(curx, mobileik.x - elWidth));
           t.style.left = mobilevviewleft + clampedX + "px";
 
-console.log(elementgetfromxy?.id,"gerredelemnentrxuy")
-     const childEl = document.querySelector(`[data-name="${p.id}child"]`);
-   const validTarget =
-            elementgetfromxy && elementgetfromxy.id !=="divrect" &&
-              elementgetfromxy.id !== p.id &&
-              elementgetfromxy.id !== "body" &&
-              elementgetfromxy.id !== "navbar" &&
-              elementgetfromxy.id !== "root" && !elementgetfromxy.classList.contains("hrids") &&
-              elementgetfromxy !== element &&
-              elementgetfromxy !== t &&
-              // Only allow if the target can legally accept this child
-              canAcceptChild(elementgetfromxy, element)
+          console.log(elementgetfromxy?.id, "gerredelemnentrxuy");
+          const childEl = document.querySelector(`[data-name="${p.id}child"]`);
+          const validTarget =
+            elementgetfromxy &&
+            elementgetfromxy.id !== "divrect" &&
+            elementgetfromxy.id !== p.id &&
+            elementgetfromxy.id !== "body" &&
+            elementgetfromxy.id !== "navbar" &&
+            elementgetfromxy.id !== "root" &&
+            !elementgetfromxy.classList.contains("hrids") &&
+            elementgetfromxy !== element &&
+            elementgetfromxy !== t &&
+            // Only allow if the target can legally accept this child
+            canAcceptChild(elementgetfromxy, element)
               ? elementgetfromxy
               : null;
 
-console.log(validTarget,"iss. erlementxtxyyy",childEl)
-if (childEl) {
-  if (validTarget) {
-         const isDescendant = childEl.contains(validTarget);
+          console.log(validTarget, "iss. erlementxtxyyy", childEl);
+          if (childEl) {
+            if (validTarget) {
+              const isDescendant = childEl.contains(validTarget);
 
- if (!isDescendant && validTarget !== currentDropTarget) {
-      if (currentDropTarget) {
+              if (!isDescendant && validTarget !== currentDropTarget) {
+                if (currentDropTarget) {
                   t.appendChild(childEl);
                 }
 
- (childEl as HTMLElement).style.position="static";
-(childEl as HTMLElement).style.left="0px";
-(childEl as HTMLElement).style.top="0px";
+                (childEl as HTMLElement).style.position = "static";
+                (childEl as HTMLElement).style.left = "0px";
+                (childEl as HTMLElement).style.top = "0px";
                 (validTarget as HTMLElement).appendChild(childEl);
-                currentDropTarget = validTarget;
 
                 // Update mobile hierarchy map
-                const mobileTargetEntry = mobileHierarchyMap.get(validTarget.id);
-                if (mobileTargetEntry && !mobileTargetEntry.childrens.includes(p.id)) {
+                const mobileTargetEntry = mobileHierarchyMap.get(
+                  validTarget.id,
+                );
+                if (
+                  mobileTargetEntry &&
+                  !mobileTargetEntry.childrens.includes(p.id)
+                ) {
+                  if (currentDropTarget) {
+                    const parentEntry = mobileHierarchyMap.get(
+                      currentDropTarget.id,
+                    );
+                    if (parentEntry && parentEntry.childrens.includes(p.id)) {
+                      parentEntry.childrens = parentEntry.childrens.filter(
+                        (el: any) => el !== p.id,
+                      );
+                    }
+                  }
+
                   mobileTargetEntry.childrens.push(p.id);
                 }
-                console.log(mobileTargetEntry, "is mobileHierarchy after append", mobileHierarchyMap);
+
+                currentDropTarget = validTarget;
+                console.log(
+                  mobileTargetEntry,
+                  "is mobileHierarchy after append",
+                  mobileHierarchyMap,
+                );
 
                 setrecentelement(p.id as string);
-                 element.onmousedown = start_drag;
-                console.log("Inserted into:", validTarget.id || validTarget.tagName);
-
- }
-
-  }else{
-
-
-                  if (currentDropTarget) {
-             
+                element.onmousedown = start_drag;
+                console.log(
+                  "Inserted into:",
+                  validTarget.id || validTarget.tagName,
+                );
+              }
+            } else {
+              if (currentDropTarget) {
                 // Update mobile hierarchy map — remove from old parent
-                const mobileTargetEntry = mobileHierarchyMap.get(currentDropTarget.id);
-                if (mobileTargetEntry && mobileTargetEntry.childrens.includes(p.id)) {
-                  mobileTargetEntry.childrens = mobileTargetEntry.childrens.filter((el: any) => el !== p.id);
-                } 
-              t.appendChild(childEl);
+                const mobileTargetEntry = mobileHierarchyMap.get(
+                  currentDropTarget.id,
+                );
+                if (
+                  mobileTargetEntry &&
+                  mobileTargetEntry.childrens.includes(p.id)
+                ) {
+                  mobileTargetEntry.childrens =
+                    mobileTargetEntry.childrens.filter(
+                      (el: any) => el !== p.id,
+                    );
+                }
+                t.appendChild(childEl);
                 currentDropTarget = null;
                 // Child is back in t — drag is handled by p.onmousedown, not element
                 element.onmousedown = null;
                 console.log("Restored to original wrapper");
               }
-  }
-}
+            }
+          }
           //sertting old mob object
 
-          let oldmobmapobj = { ...objset }
-          oldmobmapobj.top = (y / window.innerHeight) * 100 + "%"
-          oldmobmapobj.left = ((mobilevviewleft + clampedX) / window.innerWidth) * 100 + "%";
-          oldmobmap.set(oldmobmapobj.name, oldmobmapobj)
-          mobileoldmapstoreing.current.set(oldmobmapobj.name, oldmobmapobj)
+          let oldmobmapobj = { ...objset };
+          oldmobmapobj.top = (y / window.innerHeight) * 100 + "%";
+          oldmobmapobj.left =
+            ((mobilevviewleft + clampedX) / window.innerWidth) * 100 + "%";
+          oldmobmap.set(oldmobmapobj.name, oldmobmapobj);
+          mobileoldmapstoreing.current.set(oldmobmapobj.name, oldmobmapobj);
 
           // console.log(oldmobmap,"is old mobobj",mobilevviewleft+ clampedX )
           //sertting old mob object
 
-
-
-
-
-
           if (buttonmob) {
-
-
-let mobileobjsearr: Record<string, string> = { ...objset }
+            let mobileobjsearr: Record<string, string> = { ...objset };
             if ("width" in mobileobjsearr) {
-              if (!mobileobjsearr?.width.includes("vw") && "width" in mobileobjsearr) {
-                let mobilex = mobileik.x / 100
-                let newmobilekwidth = (parseInt(mobileobjsearr?.width)) / mobilex + "vw"
+              if (
+                !mobileobjsearr?.width.includes("vw") &&
+                "width" in mobileobjsearr
+              ) {
+                let mobilex = mobileik.x / 100;
+                let newmobilekwidth =
+                  parseInt(mobileobjsearr?.width) / mobilex + "vw";
                 // console.log(newmobilekwidth,"is widthh")
                 mobileobjsearr.width = newmobilekwidth;
               }
               // console.log("widt ondd")
             } else {
-
               // console.log(leftformobile,"is leftmobile from illl")
               // console.log("illalallalal")
             }
             // console.log(mobileobjsearr,"is teh aray  from mobbb")
-            mobileobjsearr.left = "0"
-            mobileobjsearr.top = "0"
+            mobileobjsearr.left = "0";
+            mobileobjsearr.top = "0";
 
             // console.log(leftformobile,"isss mob111bbbbb")
             // buttonmob.style.top = (cury / window.innerHeight) * 100 + "%"
-            mobileobjsearr.top = (cury / window.innerHeight) * 100 + "%"
-
+            mobileobjsearr.top = (cury / window.innerHeight) * 100 + "%";
 
             let leftPercent = (clampedX / mobileik.x) * 100;
             // buttonmob.style.left = leftformobile + "%"
             // console.log(leftPercent,"is tye left in leeeeeeee")
             mobileobjsearr.left = leftPercent + "%";
-            if (leftformobile > 0) { // it is used to set the make the leftvalues crt
-
+            if (leftformobile > 0) {
+              // it is used to set the make the leftvalues crt
               //  console.log(Math.abs((leftformobile -((elemntrect.width ) /mobileik.x)*100)) ,"is sttttt")
-
             } else {
-
               // console.log(leftformobile,"is leftmobillllel")
               //  buttonmob.style.left = 0  +"%"
               //           mobileobjsearr.left= 0  +"%"
-
             }
-
-
 
             // console.log(oldmobobj,"is mpbobj",mobileobjsearr)
             // console.log(mobileobjsearr,"is mobilearrayyyyy8790")
 
-
-            mapref.set(mobileobjsearr.name, mobileobjsearr)
-            mobMapRef.current.set(mobileobjsearr.name, mobileobjsearr)
-            stylesmap.current.set(mobileobjsearr.name, mobileobjsearr)
-
-            //  console.log("new mapref",mapref) 
+            mapref.set(mobileobjsearr.name, mobileobjsearr);
+            mobMapRef.current.set(mobileobjsearr.name, mobileobjsearr);
+            mobilestylesmap.current.set(mobileobjsearr.name, mobileobjsearr);
+            console.log(
+              mobilestylesmap.current,
+              "is mobilestylesmapinlap",
+              mobileobjsearr,
+            );
+            //  console.log("new mapref",mapref)
             /////  mobarr setting///////
             if (setmobarr.has(JSON.stringify(mobileobjsearr))) {
-
               setmobarr.delete(JSON.stringify(mobileobjsearr));
               //  console.log("olderond:",oldobj)
               oldmobobj = mobileobjsearr;
             } else {
-
               setmobarr.delete(JSON.stringify(oldmobobj));
               // console.log("older:",oldmobobj)
               oldmobobj = mobileobjsearr;
@@ -590,12 +674,8 @@ let mobileobjsearr: Record<string, string> = { ...objset }
               //  console.log(setmobarr,"afterupdating")
             }
 
-
             /////  mobarr setting///////
-
           }
-
-
 
           // os we wnt to get in mobile
           hr.style.top = "-4px";
@@ -617,13 +697,7 @@ let mobileobjsearr: Record<string, string> = { ...objset }
           // hr3.style.top=-(parseInt(hr3.style.height)/2)+"px"
           // hr4.style.top=-(parseInt(hr4.style.height)/2)+"px"
           // hr4.style.left=(parseInt(element.style.width)+3)+"px"
-
-
         }
-
-
-
-
 
         // when mobile
         //             if (  ismobilevalue.current && ((x/window.innerWidth)*100 <= ((mobileik.x)  /window.innerWidth)*100 ) ) {
@@ -644,7 +718,7 @@ let mobileobjsearr: Record<string, string> = { ...objset }
         //         let xbalancewidth;
         //             // console.log(((x/(mobileik.x)  )*100  -((parseInt(element.style.width)+20)/window.innerWidth)*100   )+"%" ,"is percentahe on that ",(parseInt(element.style.width)/window.innerWidth)*100 )
         //         //         //  hr1
-        // // let  elemtmovingleft=(((x-parseInt(element.style.width))/(window.innerWidth))*100 )  
+        // // let  elemtmovingleft=(((x-parseInt(element.style.width))/(window.innerWidth))*100 )
         // let elemtmovingleft=(x/window.innerWidth)*100
         // let iffsetx=element.offsetWidth
         // let clampx=x-(iffsetx/2)
@@ -656,7 +730,7 @@ let mobileobjsearr: Record<string, string> = { ...objset }
         //   Math.min(clampx,mobileik.x-iffsetx)
         // )
         // t.style.left=(clampx/window.innerWidth)*100 +"%"
-        // console.log(elemtmovingleft," is elemyt mobvi g left ",(clampx/window.innerWidth)*100 +"%")  
+        // console.log(elemtmovingleft," is elemyt mobvi g left ",(clampx/window.innerWidth)*100 +"%")
 
         //         // os we wnt to get in mobile
         //           if (buttonmob) {
@@ -664,12 +738,10 @@ let mobileobjsearr: Record<string, string> = { ...objset }
         //           // console.log(leftformobile,"isss mob111bbbbb")
         //                 buttonmob.style.top=(y/window.innerHeight)*100+"%"
 
-
         //      if (leftformobile>0) { // it is used to set the make the leftvalues crt
         //          buttonmob.style.left = leftformobile  +"%"
 
-
-        //      } 
+        //      }
 
         //           }
 
@@ -685,7 +757,6 @@ let mobileobjsearr: Record<string, string> = { ...objset }
         //         // hr4.style.top=-(parseInt(hr4.style.height)/2)+"px"
         //         // hr4.style.left=(parseInt(element.style.width)+3)+"px"
 
-
         //             }
 
         //whe mobile
@@ -693,8 +764,10 @@ let mobileobjsearr: Record<string, string> = { ...objset }
 
         // console.log(parseInt(element.style.width),"is elent width",elemntrect)
         if (!ismobilevalue.current) {
-          const elements = document.querySelector(`[data-parent="${p.id + "parent"}"]`)?.querySelector(`#${p.id}`) as HTMLElement;
-          console.log(p.id, "idssd s sidfdddd", elements)
+          const elements = document
+            .querySelector(`[data-parent="${p.id + "parent"}"]`)
+            ?.querySelector(`#${p.id}`) as HTMLElement;
+          console.log(p.id, "idssd s sidfdddd", elements);
           // 1. Calculate half dimensions for centering
           const halfW = elemntrect.width / 2;
           const halfH = elemntrect.height / 2;
@@ -702,7 +775,7 @@ let mobileobjsearr: Record<string, string> = { ...objset }
           // 2. Calculate centered and clamped X
           const clampedX = Math.max(
             halfW,
-            Math.min(x, document.documentElement.clientWidth - halfW)
+            Math.min(x, document.documentElement.clientWidth - halfW),
           );
           const centeredX = clampedX - halfW;
 
@@ -710,12 +783,13 @@ let mobileobjsearr: Record<string, string> = { ...objset }
           // We use Math.max(navbarprops, ...) to stop the element at the navbar edge
           const centeredY = Math.max(
             navbarprops,
-            Math.min(y - halfH, document.documentElement.clientHeight)
+            Math.min(y - halfH, document.documentElement.clientHeight),
           );
 
           // 4. Always move the wrapper with the mouse so the drag feels live
           t.style.left = (centeredX / window.innerWidth) * 100 + "%";
-          t.style.top = (centeredY / document.documentElement.clientHeight) * 100 + "%";
+          t.style.top =
+            (centeredY / document.documentElement.clientHeight) * 100 + "%";
 
           // Find the child element (the actual content node)
           const childEl = document.querySelector(`[data-name="${p.id}child"]`);
@@ -723,23 +797,21 @@ let mobileobjsearr: Record<string, string> = { ...objset }
           // Determine whether the cursor is over a valid, different container
           const validTarget =
             elementgetfromxy &&
-              elementgetfromxy.id !== p.id &&
-              elementgetfromxy.id !== "body" &&
-              elementgetfromxy.id !== "navbar" &&
-              elementgetfromxy.id !== "root" && !elementgetfromxy.classList.contains("hrids") &&
-              elementgetfromxy !== element &&
-              elementgetfromxy !== t &&
-              // Only allow if the target can legally accept this child
-              canAcceptChild(elementgetfromxy, element)
+            elementgetfromxy.id !== p.id &&
+            elementgetfromxy.id !== "body" &&
+            elementgetfromxy.id !== "navbar" &&
+            elementgetfromxy.id !== "root" &&
+            !elementgetfromxy.classList.contains("hrids") &&
+            elementgetfromxy !== element &&
+            elementgetfromxy !== t &&
+            // Only allow if the target can legally accept this child
+            canAcceptChild(elementgetfromxy, element)
               ? elementgetfromxy
               : null;
 
           if (childEl) {
             if (validTarget) {
-
-
-
-       console.log(validTarget,"is valiedtarget",childEl,"is child")
+              console.log(validTarget, "is valiedtarget", childEl, "is child");
               // Safety: do NOT append if target is inside the child (HierarchyRequestError guard)
               const isDescendant = childEl.contains(validTarget);
 
@@ -748,51 +820,62 @@ let mobileobjsearr: Record<string, string> = { ...objset }
                 if (currentDropTarget) {
                   t.appendChild(childEl);
                 }
-                (childEl as HTMLElement).style.position="static";
-(childEl as HTMLElement).style.left="0px";
-(childEl as HTMLElement).style.top="0px";
-
-
-
-
-
-
-
-
-
+                (childEl as HTMLElement).style.position = "static";
+                (childEl as HTMLElement).style.left = "0px";
+                (childEl as HTMLElement).style.top = "0px";
 
                 (validTarget as HTMLElement).appendChild(childEl);
-                currentDropTarget = validTarget;
 
                 // Update hierarchy map
-                console.log(validTarget.id,"is validtarget id")
-                const targetEntry = hierarchyMap.get(validTarget.id);
+                console.log(validTarget.id, "is validtarget id");
+                const targetEntry = hierarchyMapRef.current.get(validTarget.id);
                 if (targetEntry && !targetEntry.childrens.includes(p.id)) {
+                  console.log(currentDropTarget, "is prteviouscuitrrenttarget");
+                  if (currentDropTarget) {
+                    const parentEntry = hierarchyMapRef.current.get(
+                      currentDropTarget.id,
+                    );
+                    if (parentEntry && parentEntry.childrens.includes(p.id)) {
+                      parentEntry.childrens = parentEntry.childrens.filter(
+                        (el: any) => el !== p.id,
+                      );
+                    }
+                  }
                   targetEntry.childrens.push(p.id);
                 }
 
-
-                console.log(targetEntry,"is hirarchafterappend",hierarchyMap)
+                currentDropTarget = validTarget;
+                console.log(
+                  targetEntry,
+                  "is hirarchafterappend",
+                  hierarchyMapRef.current,
+                );
                 setrecentelement(p.id as string);
                 // Allow user to click the element from within the container to start a drag
                 element.onmousedown = start_drag;
-                console.log("Inserted into:", validTarget.id || validTarget.tagName);
+                console.log(
+                  "Inserted into:",
+                  validTarget.id || validTarget.tagName,
+                );
               }
               // (if still in same validTarget, do nothing — it's already there)
             } else {
-
-            console.log("illla")
+              console.log("illla");
               // Cursor not over any valid container — restore child back into wrapper t
               if (currentDropTarget) {
                 t.appendChild(childEl);
-                  const targetEntry = hierarchyMap.get(currentDropTarget.id);
+                const targetEntry = hierarchyMapRef.current.get(
+                  currentDropTarget.id,
+                );
                 if (targetEntry && targetEntry.childrens.includes(p.id)) {
-                 console.log("its is intarget",targetEntry,p.id)
-                  targetEntry.childrens=targetEntry.childrens.filter((el:any)=>el!==p.id);
+                  console.log("its is intarget", targetEntry, p.id);
+                  targetEntry.childrens = targetEntry.childrens.filter(
+                    (el: any) => el !== p.id,
+                  );
                 }
- console.log(targetEntry,"is afterremoving targetentry")
+                console.log(targetEntry, "is afterremoving targetentry");
                 currentDropTarget = null;
-               
+
                 // Child is back in t — drag is handled by p.onmousedown, not element
                 element.onmousedown = null;
                 console.log("Restored to original wrapper");
@@ -813,13 +896,23 @@ let mobileobjsearr: Record<string, string> = { ...objset }
           lapobject.left = (centeredX / window.innerWidth) * 100 + "%";
 
           // Store as vh relative to the viewport height, or change to % if preferred
-          lapobject.top = (relativeTopValue / document.documentElement.clientHeight) * 100 + "vh";
+          lapobject.top =
+            (relativeTopValue / document.documentElement.clientHeight) * 100 +
+            "vh";
 
           // Sync with your maps
           lapref.set(lapobject.name, lapobject);
           lapMapRef.current.set(lapobject.name, lapobject);
-          stylesmap.current.set(lapobject.name, lapobject)
+          stylesmap.current.set(lapobject.name, lapobject);
+          mobilestylesmap.current.set(lapobject.name, lapobject);
+
+          console.log(
+            mobilestylesmap.current,
+            "is mobilestylesmapinlap",
+            lapobject,
+          );
           /* --- Lines/Guides Positioning --- */
+
           hr.style.top = "-4px";
           hr.style.left = -(parseInt(hr.style.width) / 2) + "px";
           hr2.style.top = elemntrect.height + "px";
@@ -827,11 +920,17 @@ let mobileobjsearr: Record<string, string> = { ...objset }
           hr3.style.top = -(parseInt(hr3.style.height) / 2) + "px";
           hr4.style.top = -(parseInt(hr4.style.height) / 2) + "px";
           hr4.style.left = elemntrect.width + "px";
-          console.log(elemntrect.width, "is hr4")
+          console.log(elemntrect.width, "is hr4");
         }
       };
       var mouseMoveHandler = function (e: MouseEvent) {
-        console.log(e, "is yyyyyy", e.clientX, e.clientY, document.elementsFromPoint(e.clientX, e.clientY))
+        console.log(
+          e,
+          "is yyyyyy",
+          e.clientX,
+          e.clientY,
+          document.elementsFromPoint(e.clientX, e.clientY),
+        );
         e = e || window.event;
 
         // console.log("mousehandlemovecallede ")
@@ -843,9 +942,6 @@ let mobileobjsearr: Record<string, string> = { ...objset }
 
         var y: any = mouseY(e);
 
-
-
-
         if (x.value != offsetX || y != offsetY) {
           // console.log("calllllleddd","x",x,"y",y,"annnddd",offsetX,"y:",offsetY)
 
@@ -854,33 +950,49 @@ let mobileobjsearr: Record<string, string> = { ...objset }
           clientx = e.clientX;
           clienty = e.clientY;
           move(offsetX, offsetY);
-
         }
 
         return false;
       };
       var start_drag = function (e: any) {
-        setslecetdelemnt(p.dataset.name as string)
+        setslecetdelemnt(p.dataset.name as string);
 
         // ── Restore child from container ───────────────────────────────────────
         const childEl = document.querySelector(`[data-name="${p.id}child"]`);
         if (childEl && childEl.parentElement !== t) {
-          console.log("Restoring child from container back to wrapper t",currentDropTarget,"is currentDropTarget",childEl.parentElement,"is parent id");
-   
-          if(childEl.parentElement){
+          console.log(
+            "Restoring child from container back to wrapper t",
+            currentDropTarget,
+            "is currentDropTarget",
+            childEl.parentElement,
+            "is parent id",
+          );
+
+          if (childEl.parentElement) {
             // Desktop hierarchy
-            const targetEntry = hierarchyMap.get(childEl.parentElement.id);
-            console.log(targetEntry,"is beforechanging")
-                if (targetEntry && targetEntry.childrens.includes(p.id)) {
-                 console.log("omddd",p.id,targetEntry)
-                  targetEntry.childrens=targetEntry.childrens.filter((el:any)=>el!==p.id);
-                }
-                console.log(targetEntry,"is aftercghanging")
+            const targetEntry = hierarchyMapRef.current.get(
+              childEl.parentElement.id,
+            );
+            console.log(targetEntry, "is beforechanging");
+            if (targetEntry && targetEntry.childrens.includes(p.id)) {
+              console.log("omddd", p.id, targetEntry);
+              targetEntry.childrens = targetEntry.childrens.filter(
+                (el: any) => el !== p.id,
+              );
+            }
+            console.log(targetEntry, "is aftercghanging");
 
             // Mobile hierarchy
-            const mobileTargetEntry = mobileHierarchyMap.get(childEl.parentElement.id);
-            if (mobileTargetEntry && mobileTargetEntry.childrens.includes(p.id)) {
-              mobileTargetEntry.childrens = mobileTargetEntry.childrens.filter((el: any) => el !== p.id);
+            const mobileTargetEntry = mobileHierarchyMap.get(
+              childEl.parentElement.id,
+            );
+            if (
+              mobileTargetEntry &&
+              mobileTargetEntry.childrens.includes(p.id)
+            ) {
+              mobileTargetEntry.childrens = mobileTargetEntry.childrens.filter(
+                (el: any) => el !== p.id,
+              );
             }
           }
           t.appendChild(childEl);
@@ -908,10 +1020,15 @@ let mobileobjsearr: Record<string, string> = { ...objset }
         return false;
       };
       var stop_drag = function () {
-console.log(hierarchyMap,"hierarchyinstop",mobileHierarchyMap,"is mobileHierarchyMap")
-        console.log(clientx, clienty, "is clientx and clienty")
+        console.log(
+          hierarchyMapRef.current,
+          "hierarchyinstop",
+          mobileHierarchyMap,
+          "is mobileHierarchyMap",
+        );
+        console.log(clientx, clienty, "is clientx and clienty");
         element.style.zIndex = "10";
-        t.style.zIndex = "10"
+        t.style.zIndex = "10";
         isSelected = false;
 
         // ── Finalize drop ─────────────────────────────────────────────────────
@@ -932,13 +1049,13 @@ console.log(hierarchyMap,"hierarchyinstop",mobileHierarchyMap,"is mobileHierarch
         }
         // ── Finalize drop ─────────────────────────────────────────────────────
 
-        currenthistoryref.current++
+        currenthistoryref.current++;
         element.style.pointerEvents = "auto";
         t.style.pointerEvents = "auto";
 
-        recentscountref.current = currenthistoryref.current
-        console.log(recentscountref, "is countref", currenthistoryref)
-        forceRender(prev => prev + 1)
+        recentscountref.current = currenthistoryref.current;
+        console.log(recentscountref, "is countref", currenthistoryref);
+        forceRender((prev) => prev + 1);
 
         hr.style.display = "none";
         hr2.style.display = "none";
@@ -964,8 +1081,8 @@ console.log(hierarchyMap,"hierarchyinstop",mobileHierarchyMap,"is mobileHierarch
         return false;
       };
       if (p.id.includes("input")) {
-        p.onpointerdown = start_drag
-        p.onpointerup = stop_drag
+        p.onpointerdown = start_drag;
+        p.onpointerup = stop_drag;
       } else {
         p.onmousedown = start_drag;
         // stop_drag is registered on document.body inside mouseMoveHandler
@@ -981,12 +1098,11 @@ console.log(hierarchyMap,"hierarchyinstop",mobileHierarchyMap,"is mobileHierarch
       };
 
       document.addEventListener("keydown", (event) => {
-
         // Space: stop drag
         if (event.key === " ") {
           if (drag) {
             let activeelemt = document.activeElement as HTMLElement;
-            activeelemt?.blur()
+            activeelemt?.blur();
             stop_drag();
           }
         }
@@ -996,20 +1112,28 @@ console.log(hierarchyMap,"hierarchyinstop",mobileHierarchyMap,"is mobileHierarch
           if (isSelected) {
             event.preventDefault();
             if (drag) stop_drag(); // stop any active drag first
-            const childToRemove = document.querySelector(`[data-name="${p.id}child"]`);
+            const childToRemove = document.querySelector(
+              `[data-name="${p.id}child"]`,
+            );
 
             // Also remove from parent hierarchy if it's nested
             if (childToRemove && childToRemove.parentElement) {
               const parentId = childToRemove.parentElement.id;
-              
+
               const targetEntry = hierarchyMap.get(parentId);
               if (targetEntry && targetEntry.childrens.includes(p.id)) {
-                targetEntry.childrens = targetEntry.childrens.filter((el:any) => el !== p.id);
+                targetEntry.childrens = targetEntry.childrens.filter(
+                  (el: any) => el !== p.id,
+                );
               }
 
               const mobileTargetEntry = mobileHierarchyMap.get(parentId);
-              if (mobileTargetEntry && mobileTargetEntry.childrens.includes(p.id)) {
-                mobileTargetEntry.childrens = mobileTargetEntry.childrens.filter((el:any) => el !== p.id);
+              if (
+                mobileTargetEntry &&
+                mobileTargetEntry.childrens.includes(p.id)
+              ) {
+                mobileTargetEntry.childrens =
+                  mobileTargetEntry.childrens.filter((el: any) => el !== p.id);
               }
             }
 

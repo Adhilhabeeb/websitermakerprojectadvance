@@ -73,6 +73,7 @@ export interface Contextapptype {
   showsidemenu: boolean;
   lapview: React.RefObject<storedvalkuetype>;
   stylesmap: React.RefObject<Map<string, Record<string, string>>>;
+  mobilestylesmap: React.RefObject<Map<string, Record<string, string>>>;
   slecetdelemnt: string | null;
   setslecetdelemnt: React.Dispatch<SetStateAction<string | null>>;
   setparent: React.Dispatch<SetStateAction<string | null>>;
@@ -110,6 +111,7 @@ function App() {
 
   let [recentelement, setrecentelement] = useState<string | null>(null)
   let stylesmap = useRef<Map<string, Record<string, string>>>(new Map())
+  let mobilestylesmap = useRef<Map<string, Record<string, string>>>(new Map())
   const [projpage, setprojpage] = useState(false);
   const [, forceRender] = useState(0);
   const [showsidemenu, setshowsidemenu] = useState(false);
@@ -283,7 +285,7 @@ handleclick()
             mobMapRef,
             lapMapRef,
             historytmapref,
-            mobileoldmapstoreing, setMode, mode, lapview, stylesmap, setparent, parent, recentelement, setrecentelement, hierarchyMapRef, mobileHierarchyMapRef
+            mobileoldmapstoreing, setMode, mode, lapview, stylesmap, mobilestylesmap, setparent, parent, recentelement, setrecentelement, hierarchyMapRef, mobileHierarchyMapRef
           }}
         >
           <ThemeProvider attribute="class" defaultTheme="light" enableSystem>

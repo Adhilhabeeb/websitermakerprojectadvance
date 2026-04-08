@@ -17,18 +17,22 @@ function Rightchangingoption({ slecetdelemnt, elenttype, checkedasmobile, setmob
   const [va, setva] = useState("")
 
   useEffect(() => {
+   
 
 
     if (slecetdelemnt && elenttype) {
 
       console.log(slecetdelemnt, "is slett current")
 
-      let maindiv = document.querySelector(`#${slecetdelemnt}`)
+      let maindiv = document.querySelector(`[data-parent="${slecetdelemnt}parent"]`);
+      console.log(maindiv,"is mainnn");
 
-
-      let elemet = maindiv?.querySelector(`#${slecetdelemnt}`) as HTMLElement
-
-      console.log(elemet, "us teh elemy ", maindiv)
+      if (maindiv) {
+      let elemet = maindiv.querySelector(`#${slecetdelemnt}`) as HTMLElement  ??document.querySelector(`[data-name="${slecetdelemnt}child"]`) as HTMLElement
+      console.log(elemet,"isa sleemement")
+        if (elemet) {
+          
+                console.log(elemet, "us teh elemy ", maindiv)
       let value = Object.entries(cssdefalult[elenttype]).map(([name, value]: any) => {
         if (name == "placeholder") {
           let el = elemet as HTMLInputElement
@@ -43,6 +47,11 @@ function Rightchangingoption({ slecetdelemnt, elenttype, checkedasmobile, setmob
 
       console.log("objectvalueincss", objectwithvalues)
       setcsscustem(objectwithvalues)
+        }
+      }
+
+
+
     }
   }, [slecetdelemnt, elenttype])
 

@@ -31,7 +31,7 @@ export default function ButtonEditor({
     throw Error("context not found");
   }
 
-  let { lapMapRef, mobMapRef, mobileoldmapstoreing } = context;
+  let { lapMapRef, mobMapRef, mobileoldmapstoreing, mobilestylesmap } = context;
 
   let elementtype = slecetdelemnt?.split("").filter(el => !isStringInteger(el)).join("");
 
@@ -54,8 +54,13 @@ export default function ButtonEditor({
 
     if (slecetdelemnt && elenttype) {
 
-      let maindiv = document.querySelector(`#${slecetdelemnt}`);
-      let elemet = maindiv?.querySelector(`#${slecetdelemnt}`) as HTMLElement;
+      let maindiv = document.querySelector(`[data-parent="${slecetdelemnt}parent"]`);
+      let elemet: HTMLElement | null = null;
+      if (maindiv) {
+        elemet = maindiv.querySelector(`#${slecetdelemnt}`) as HTMLElement ?? document.querySelector(`[data-name="${slecetdelemnt}child"]`) as HTMLElement;
+      }
+
+      if (!elemet) return;
 
       let oldmobmapobj = mobileoldmapstoreing.current.get(slecetdelemnt);
       let elementfrommap = mobMapRef.current.get(slecetdelemnt);
@@ -66,7 +71,7 @@ export default function ButtonEditor({
         let [name, value] = el;
 
         if (name == "text") {
-          // elemet.innerHTML = value as string;
+          // elemet.innerText = value as string;
         }
 
         if (name == "placeholder") {
@@ -112,6 +117,7 @@ export default function ButtonEditor({
 
       if (checkedasmobile && elementfrommap) {
         mobMapRef.current.set(slecetdelemnt, elementfrommap);
+        mobilestylesmap.current.set(slecetdelemnt, elementfrommap);
       }
 
       if (!checkedasmobile && lapelementmap) {

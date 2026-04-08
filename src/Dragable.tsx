@@ -17,7 +17,7 @@ interface dragboxprop {
 function DragableBox(props: any) {
   let { id } = useParams()
   let location = useLocation()
-  let { lapview, showpanel, setshowpanel, sethandleecentfunction, forceRender, setshowsidemenu, showsidemenu, slecetdelemnt, setslecetdelemnt, mobMapRef, lapMapRef, historytmapref, mobileoldmapstoreing, mode, hierarchyMapRef, mobileHierarchyMapRef } = useContext<Contextapptype>(NavContext as any)
+  let { lapview, showpanel, setshowpanel, sethandleecentfunction, forceRender, setshowsidemenu, showsidemenu, slecetdelemnt, setslecetdelemnt, mobMapRef, lapMapRef, historytmapref, mobileoldmapstoreing, mode, hierarchyMapRef, mobileHierarchyMapRef,mobilestylesmap } = useContext<Contextapptype>(NavContext as any)
 
   let { checkedasmobile, navref, currenthistoryref, recentscountref, setcheckedasmobile } = props
 
@@ -88,6 +88,8 @@ function DragableBox(props: any) {
       currenthistoryref.current = 0
       recentscountref.current = 0
 
+
+  console.log("unmount",mobilestylesmap)
     }
   }, [])
 
@@ -117,6 +119,9 @@ function DragableBox(props: any) {
     let mobmapva = Array.from(mobMapRef.current)
     let lapva = Array.from(lapMapRef.current)
 
+
+
+    
     let historyobj = {
       mapref: mobmapva,
       lapref: lapva,
@@ -129,7 +134,7 @@ function DragableBox(props: any) {
 
 
     console.log(historymap, "is  thebhistroy map", historytmapref.current)
-
+console.log(hierarchyMapRef,"isheirarcvhy",mobileHierarchyMapRef,"ismobile",mobilestylesmap,"isstylesmapppp")
 
 
   }, [currenthistoryref.current])
@@ -419,7 +424,9 @@ if (checkedasmobile) {
       button.style[name] = value
 
     })
-
+if (ele=="p") {
+  button.style.width=100+"%"
+}
     // button.style.position = "absolute";
 
 

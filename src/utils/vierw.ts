@@ -150,6 +150,76 @@ console.log("afterallmap",map)
 //   });
 }
 
+export function Maptocreateelemenet(
+  map: Map<string, any>,
+  addbbutton: (ele: string, data: Record<string, any>, isnotparent?: boolean) => void,
+  mobilestylemap:Map<string, Record<string, any>>,navbarprops:number
+) {
+
+
+console.log("isa mobbbsatylemmppp",map)
+
+  let arrayFromMap = Array.from(map);
+console.log(arrayFromMap,"is arr")
+
+  function processNode(nodeData: any) {
+    let name = nodeData.name;
+    if (!name) return null;
+
+    let domParent = document.querySelector(`[data-parent="${name}parent"]`);
+    let domChild = document.querySelector(`[data-name="${name}child"]`);
+let stylesdsata=mobilestylemap.get(name)
+if (stylesdsata) {
+      if (!domParent && !domChild) {
+    let     newdata={...stylesdsata}
+    
+    let topnavinpercentage=(navbarprops/ document.documentElement.clientHeight) * 100 
+    newdata.top=parseFloat(newdata.top)+topnavinpercentage+"%"
+      let tag = name.split("").filter((char: string) => !isStringInteger(char)).join("");
+      addbbutton(tag, newdata); // create element
+      domChild = document.querySelector(`[data-name="${name}child"]`);
+      console.log(domChild,"isdddomchild");
+    (  domChild as HTMLElement).style.position="static";
+     (  domChild as HTMLElement).style.top="0px";
+     (  domChild as HTMLElement).style.left="0px";
+    }
+
+    if (domChild && nodeData.childrens && nodeData.childrens.length > 0) {
+   
+      nodeData.childrens.forEach((childData: any) => {
+let element=map.get(childData)
+        console.log("eliiiii",childData,domChild,element,"is elelme")
+        let createdChild = processNode(element) as HTMLElement;
+        console.log(createdChild,"is new crerateed vhildincghildren")
+        if (createdChild) {
+          createdChild.onmousedown = (e) => {
+            e.stopPropagation();
+            if (domChild && domChild.contains(createdChild)) {
+              domChild.removeChild(createdChild);
+              let parentDiv = document.querySelector(`[data-parent="${childData}parent"]`);
+              if (parentDiv) {
+                parentDiv.appendChild(createdChild);
+              }
+            }
+          };
+          domChild!.appendChild(createdChild);
+        }
+      });
+    
+    }
+
+    return domChild
+}
+
+
+  }
+
+  arrayFromMap.forEach((el) => {
+    let [key, value] = el;
+    processNode(value);
+  });
+}
+
 export const queryClient = new QueryClient()
 
 export  async function createhtml(

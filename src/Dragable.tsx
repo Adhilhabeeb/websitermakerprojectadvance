@@ -1,7 +1,7 @@
 import React, { memo, useCallback, useContext, useEffect, useEffectEvent, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import Draggable from 'react-draggable'
 import { usemouse } from './mousemove'
-import { createElementsFromMap, createhtml, cssproper, isStringInteger, mobileik } from './utils/vierw'
+import { createElementsFromMap, createhtml, cssproper, isStringInteger, Maptocreateelemenet, mobileik } from './utils/vierw'
 import { cssdefalult, type eleent } from './utils/cssdefault'
 import Rightchangingoption from './Rightchangingoption'
 import Leftchanging from './Leftchanging'
@@ -128,7 +128,20 @@ function DragableBox(props: any) {
       oldmobmap: oldmovbva
     }
 
-    let stringhistroyobj = JSON.stringify(historyobj)
+    let hierarchyMapArray = Array.from(hierarchyMapRef.current)
+    let mobileHierarchyMapArray = Array.from(mobileHierarchyMapRef.current)
+    let mobilestylesmapArray = Array.from(mobilestylesmap.current)
+
+      let historymapadvance = {
+        mapref: mobmapva,
+        lapref: lapva,
+        oldmobmap: oldmovbva,
+        hierarchyMap: hierarchyMapArray,
+        mobileHierarchyMap: mobileHierarchyMapArray,
+        mobilestylesmap: mobilestylesmapArray
+    }
+
+    let stringhistroyobj = JSON.stringify(historymapadvance)
     console.log(historyobj, "is obj", currenthistory, "is hisnum", stringhistroyobj)
     historytmapref.current.set(currenthistory, stringhistroyobj)
 
@@ -182,10 +195,12 @@ console.log(hierarchyMapRef,"isheirarcvhy",mobileHierarchyMapRef,"ismobile",mobi
   useEffect(() => {
 
 
+
     let parsedhsitoryu = JSON.parse(historymap.get(recentscountref.current))
 
 
-    console.log(recentscountref, "is revemnddnd changed")
+    console.log(recentscountref, "is revemnddnd changed",parsedhsitoryu)
+
 
     if (recentscountref.current != 0 && recentbuttonhold) {
       console.log(recentscountref, "iiiiiii", parsedhsitoryu)
@@ -207,32 +222,38 @@ console.log(hierarchyMapRef,"isheirarcvhy",mobileHierarchyMapRef,"ismobile",mobi
         console.log(parsedhsitoryu.lapref, "afterr quuiiiiiii")
 
         console.log(lapref, "is new lapref after changed ")
-        console.log(parsedhsitoryu.lapref, "lapppppppppp")
+        console.log(parsedhsitoryu.mobilestylesmap, "lapppppppppp")
 
         // let laprefar=Array.from(parsedhsitoryu.lapref)
-
-        parsedhsitoryu.lapref.map((el: any) => {
-          let [name, obj]: [string, Record<string, any>] = el;
-          let oldobj = { ...obj }
-          let navbar = navref.current
+        let mobilestuylsmap=new Map(parsedhsitoryu.mobilestylesmap) as any
+           let navbar = navref.current
           let navbarprops = navbar?.getBoundingClientRect().height as number
 
-          let topnavinpercentage = (navbarprops / document.documentElement.clientHeight) * 100
-          oldobj.top = parseInt(oldobj.top) + topnavinpercentage + "%"
-          let elemt: string = name?.split("").filter(el => !isStringInteger(el)).join("")
-          addbbutton(elemt, oldobj)
-          // // console.log(obj,"snew and old: ",oldobj, name,navbarprops,"is navbarr",obj.top)
-          // // console.log(lapref,"is laprefff")
-          lapref.set(name, obj)
-          //  console.log(lapref,"is after  laprefff")
+Maptocreateelemenet(new Map(parsedhsitoryu.hierarchyMap),addbbutton,mobilestuylsmap,navbarprops)
 
 
-        })
+        // parsedhsitoryu.lapref.map((el: any) => {
+        //   let [name, obj]: [string, Record<string, any>] = el;
+        //   let oldobj = { ...obj }
+        //   let navbar = navref.current
+        //   let navbarprops = navbar?.getBoundingClientRect().height as number
+
+        //   let topnavinpercentage = (navbarprops / document.documentElement.clientHeight) * 100
+        //   oldobj.top = parseInt(oldobj.top) + topnavinpercentage + "%"
+        //   let elemt: string = name?.split("").filter(el => !isStringInteger(el)).join("")
+        //   addbbutton(elemt, oldobj)
+        //   // // console.log(obj,"snew and old: ",oldobj, name,navbarprops,"is navbarr",obj.top)
+        //   // // console.log(lapref,"is laprefff")
+        //   lapref.set(name, obj)
+        //   //  console.log(lapref,"is after  laprefff")
 
 
-        lapMapRef.current = new Map(parsedhsitoryu.lapref)
+        // })
 
-        console.log(lapMapRef.current, "is arrrr afterall", recentscountref.current)
+
+        // lapMapRef.current = new Map(parsedhsitoryu.lapref)
+
+        // console.log(lapMapRef.current, "is arrrr afterall", recentscountref.current)
       }
       else if (parsedhsitoryu.mapref.length > 0 && checkedasmobile) {
 
@@ -368,7 +389,7 @@ console.log(hierarchyMapRef,"isheirarcvhy",mobileHierarchyMapRef,"ismobile",mobi
 
   // console.log(move,"is move")
 
-  function addbbutton(ele: eleent = "button", data: Record<string, string> | null, e?: React.MouseEvent<HTMLElement>,) {
+  function addbbutton(ele: eleent = "button", data: Record<string, string> | null, isnotparent?:boolean,e?: React.MouseEvent<HTMLElement>,) {
     console.log(data, "is teh adtatattatata", currenthistoryref, "is ref")
 
     if (data) {
@@ -376,6 +397,7 @@ console.log(hierarchyMapRef,"isheirarcvhy",mobileHierarchyMapRef,"ismobile",mobi
 
 
     }
+  
     countref.current++
     // setaray.add(JSON.stringify({name:"adhil"}))
     // setaray.add({name:"alfin"})
@@ -528,8 +550,16 @@ if (ele=="p") {
     console.log("leftis:", data?.left)
     div.style.left = data?.left ?? "0px";
     div.style.top = data?.top ?? navref.current?.getBoundingClientRect().height + 10 + "px";
-    div.append(hr, hr2, hr3, hr4, button)
+    div.append(hr, hr2, hr3, hr4)
+
+
+        div.appendChild(button)
+    
+  
+
+
     document.body.appendChild(div)
+
     setslecetdelemnt(div.dataset.name)
     console.log(currenthistoryref.current, "in histoy")
     move(div, div, hr, hr2, hr3, hr4, setaray, button, checkedasmobile, setslecetdelemnt, setmobarr.current, mapref, navref, lapref, oldmobmap, hierarchyMapRef.current, mobileHierarchyMapRef.current)

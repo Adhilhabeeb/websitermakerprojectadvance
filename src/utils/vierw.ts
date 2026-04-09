@@ -199,6 +199,7 @@ let element=map.get(childData)
               let parentDiv = document.querySelector(`[data-parent="${childData}parent"]`);
               if (parentDiv) {
                 parentDiv.appendChild(createdChild);
+                createdChild.onmousedown=null
               }
             }
           };

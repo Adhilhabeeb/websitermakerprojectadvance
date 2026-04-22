@@ -82,9 +82,10 @@ function DragableBox(props: any) {
     return () => {
       let pathname = location.pathname
 
+
+      console.log("thheheh",hierarchyMapRef.current,"isll",mobileHierarchyMapRef.current,"ismmoo",mobilestylesmap.current,"isstyels")
       let id = pathname.replace("/project/", "")
-      console.log(id, "id the id")
-      updatemapsave(id, mobMapRef.current, lapMapRef.current, historytmapref.current, mobileoldmapstoreing.current)
+      updatemapsave(id, mobMapRef.current, lapMapRef.current, historytmapref.current, mobileoldmapstoreing.current,hierarchyMapRef.current,mobileHierarchyMapRef.current,mobilestylesmap.current)
       currenthistoryref.current = 0
       recentscountref.current = 0
 
@@ -142,11 +143,11 @@ function DragableBox(props: any) {
     }
 
     let stringhistroyobj = JSON.stringify(historymapadvance)
-    console.log(historyobj, "is obj", currenthistory, "is hisnum", stringhistroyobj)
+    // console.log(historyobj, "is obj", currenthistory, "is hisnum", stringhistroyobj)
     historytmapref.current.set(currenthistory, stringhistroyobj)
 
 
-    console.log(historymap, "is  thebhistroy map", historytmapref.current)
+    // console.log(historymap, "is  thebhistroy map", historytmapref.current)
 console.log(hierarchyMapRef,"isheirarcvhy",mobileHierarchyMapRef,"ismobile",mobilestylesmap,"isstylesmapppp")
 
 
@@ -269,13 +270,18 @@ Maptocreateelemenet(new Map(parsedhsitoryu.hierarchyMap),addbbutton,mobilestuyls
         });
 
 
+
+
+
+        let oldmobilenewstuylemap=new Map()
+
         parsedhsitoryu.oldmobmap.map((el: any) => {
           let [name, obj]: [string, Record<string, any>] = el;
           let oldobj = { ...obj }
           let elemt: string = name?.split("").filter(el => !isStringInteger(el)).join("")
-          addbbutton(elemt, oldobj)
+          // addbbutton(elemt, oldobj)
 
-
+oldmobilenewstuylemap.set(name,oldobj)
           // // console.log(obj,"snew and old: ",oldobj, name,navbarprops,"is navbarr",obj.top)
           // // console.log(lapref,"is laprefff")
 
@@ -284,6 +290,11 @@ Maptocreateelemenet(new Map(parsedhsitoryu.hierarchyMap),addbbutton,mobilestuyls
 
         })
 
+  let mobilestuylsmap=new Map(parsedhsitoryu.mobilestylesmap) as any
+           let navbar = navref.current
+          let navbarprops =0
+
+Maptocreateelemenet(new Map(parsedhsitoryu.mobileHierarchyMap),addbbutton,oldmobilenewstuylemap,navbarprops)
 
         mobMapRef.current = new Map(parsedhsitoryu.mapref)
         mobileoldmapstoreing.current = new Map(parsedhsitoryu.oldmobmap)
@@ -421,9 +432,17 @@ Maptocreateelemenet(new Map(parsedhsitoryu.hierarchyMap),addbbutton,mobilestuyls
 
 if (checkedasmobile) {
 
+console.log(mobileHierarchyMapRef.current.get(button.id),"is the mapjkghfjklf ref")
+if (!mobileHierarchyMapRef.current.get(button.id)) {
     mobileHierarchyMapRef.current.set(button.id, { name: button.id, childrens: [] });
+}
 }else{
+
+  console.log(hierarchyMapRef.current.get(button.id),"is the maplappppjkghfjklf ref")
+  if (!hierarchyMapRef.current.get(button.id)) {
+    
     hierarchyMapRef.current.set(button.id, { name: button.id, childrens: [] });
+  }
 }
     button.dataset.name = data?.name
       ? data?.name + "child"
@@ -589,6 +608,8 @@ if (ele=="p") {
 
 
     return () => {
+
+      console.log(hierarchyMapRef,"isllkapappapabefortecghabnge",mobileHierarchyMapRef,"ismobikle")
       setslecetdelemnt(null)
       const root = document.getElementById("root");
       let divmob = document.getElementById("divrect")

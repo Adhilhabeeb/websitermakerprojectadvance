@@ -459,7 +459,7 @@ export function usemouse({
           y > topdivmob
         ) {
           // console.log(heightofmobiledesigner,"is desiggneerrrr  height",y)
-
+console.log("cvollehehge. when mobiung",hierarchyMapRef,"is my. mpareff")
           if (y > heightofmobiledesigner - elemntrect.height) {
             let heighmob = y + elemntrect.height;
             // console.log("heightmob",heighmob,"jheigjt of elemt",element.style.height,"and  value is ",clamp(heighmob,mobileik.y,heighmob) +"px")
@@ -570,7 +570,7 @@ export function usemouse({
                 element.onmousedown = start_drag;
                 console.log(
                   "Inserted into:",
-                  validTarget.id || validTarget.tagName,
+                  validTarget.id || validTarget.tagName,hierarchyMapRef,"islllooii",mobileHierarchyMap
                 );
               }
             } else {
@@ -811,13 +811,15 @@ export function usemouse({
 
           if (childEl) {
             if (validTarget) {
-              console.log(validTarget, "is valiedtarget", childEl, "is child");
+           
               // Safety: do NOT append if target is inside the child (HierarchyRequestError guard)
               const isDescendant = childEl.contains(validTarget);
 
               if (!isDescendant && validTarget !== currentDropTarget) {
                 // Moving to a new container — restore child to t first, then insert
                 if (currentDropTarget) {
+
+                  console.log(t,"is the tTTTTTT",validTarget,childEl)
                   t.appendChild(childEl);
                 }
                 (childEl as HTMLElement).style.position = "static";
@@ -825,7 +827,7 @@ export function usemouse({
                 (childEl as HTMLElement).style.top = "0px";
 
                 (validTarget as HTMLElement).appendChild(childEl);
-
+   console.log(validTarget, "is valiedtarget", childEl, "is child");
                 // Update hierarchy map
                 console.log(validTarget.id, "is validtarget id");
                 const targetEntry = hierarchyMapRef.current.get(validTarget.id);
@@ -863,6 +865,8 @@ export function usemouse({
               console.log("illla");
               // Cursor not over any valid container — restore child back into wrapper t
               if (currentDropTarget) {
+
+                console.log(currentDropTarget,"cccccificdfifgi")
                 t.appendChild(childEl);
                 const targetEntry = hierarchyMapRef.current.get(
                   currentDropTarget.id,

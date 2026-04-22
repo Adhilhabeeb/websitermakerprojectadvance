@@ -40,12 +40,21 @@ mobileoldmapref=new Map(),
 export  let updatemapsave=  async (id:string,    mobref=new Map(),
 lapref=new Map(),
 historytmapref=new Map(),
-mobileoldmapref=new Map())=>{
+mobileoldmapref=new Map(),
+ hierarchyMapRef=new Map()
+ ,mobileHierarchyMapRef=new Map()
+ ,mobilestylesmap=new Map()
+
+)=>{ 
+      console.log(id, "inupadadtattattatatat id",hierarchyMapRef,"is mylap", mobileHierarchyMapRef,"is mymob",mobilestylesmap,"is mystyles")
 
    let mobData=Array.from(mobref)
      let lapData=Array.from(lapref)
       let histdata=Array.from(historytmapref)
        let mobileOld=Array.from(mobileoldmapref)
+let laptop=Array.from(hierarchyMapRef)
+let mobile=Array.from(mobileHierarchyMapRef)
+let mobilestyles=Array.from(mobilestylesmap)
 
        const { data, error } = await supabase
     .from("websitemaker")
@@ -54,6 +63,8 @@ mobileoldmapref=new Map())=>{
       lapref: JSON.stringify(lapData),
       histrorymap: JSON.stringify(histdata),
       mobileoldmap: JSON.stringify(mobileOld),
+      laptop,mobile,
+      mobilestyles
     })
     .eq("id", id) 
 

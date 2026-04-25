@@ -38,6 +38,8 @@ function DragableBox(props: any) {
   useLayoutEffect(() => {
     if (!id) return;
     async function fetch(id: string) {
+
+    
       let data = await fetchProjectById(id)
 
       console.log(data, "is teh data is recived ")
@@ -78,6 +80,7 @@ console.log(hierrachymapparsed,"isheerachyparsed")
 
       let navbar = navref.current
       let navbarprops = navbar?.getBoundingClientRect().height as number
+      alert(navbarprops)
       setcheckedasmobile(false)
       setslecetdelemnt(null)
       const root = document.getElementById("root");
@@ -498,7 +501,7 @@ if (!mobileHierarchyMapRef.current.get(button.id)) {
 
     let elemntydefauly = data ?? cssdefalult[ele]
 
-    mobilestylesmap.current.set( button.id,elemntydefauly)
+    // mobilestylesmap.current.set( button.id,elemntydefauly)
 
     console.log(mobilestylesmap.current,"is mobielstukelssmaoo")
     if (elemntydefauly?.text && elemntydefauly?.text.trim() != "") {

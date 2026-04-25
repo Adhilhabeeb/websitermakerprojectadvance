@@ -1,7 +1,7 @@
 
 import { QueryClient } from "@tanstack/react-query";
-import cssProperties from "mdn-data/css/properties.json" assert { type: "json" }
-import cssSyntaxes from "mdn-data/css/syntaxes.json" assert { type: "json" }
+import cssProperties from "mdn-data/css/properties.json" with { type: "json" }
+import cssSyntaxes from "mdn-data/css/syntaxes.json" with { type: "json" }
 
 export let mobileik = {
   x: 393,
@@ -175,6 +175,10 @@ if (stylesdsata) {
     
     let topnavinpercentage=(navbarprops/ document.documentElement.clientHeight) * 100 
     newdata.top=parseFloat(newdata.top)+topnavinpercentage+"%"
+if (name=="div1") {
+ console.log(stylesdsata.top,"Andnndnndnme:" ,name,newdata.top)
+}
+
       let tag = name.split("").filter((char: string) => !isStringInteger(char)).join("");
       addbbutton(tag, newdata); // create element
       domChild = document.querySelector(`[data-name="${name}child"]`);

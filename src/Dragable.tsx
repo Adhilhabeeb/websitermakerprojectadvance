@@ -652,11 +652,24 @@ if (ele=="p") {
     setshowsidemenu(false)
     setshowpanel(false)
     if (checkedasmobile) {
-      console.log(oldmobmap, "is oldmob")
-      createElementsFromMap(oldmobmap, addbbutton, navbarprops)
+      console.log(oldmobmap, "is oldmob",)
+
+  let navbarprops =0
+
+
+Maptocreateelemenet(new Map(mobileHierarchyMapRef.current),addbbutton,oldmobmap,navbarprops)
+
+
+      // createElementsFromMap(oldmobmap, addbbutton, navbarprops)
       console.log(oldmobmap, "is my ioldmaooo")
     } else {
-      createElementsFromMap(lapref, addbbutton, navbarprops, checkedasmobile)
+
+
+      console.log(hierarchyMapRef.current,"issshercgumpppp",mobilestylesmap.current)
+Maptocreateelemenet(new Map(hierarchyMapRef.current),addbbutton,mobilestylesmap.current,navbarprops)
+
+      // createElementsFromMap(lapref, addbbutton, navbarprops, checkedasmobile)
+      
     }
 
 

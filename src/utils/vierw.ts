@@ -227,117 +227,145 @@ let element=map.get(childData)
 
 export const queryClient = new QueryClient()
 
-export  async function createhtml(
-  mobilemap: Map<string, any>,
-  lapmap: Map<string, any>
+export async function createhtml(
+  mobileMap: Map<string, any>,
+  laptopMap: Map<string, any>,
+  stylesMap: Map<string, Record<string, any>>
 ) {
 
-  
-  console.log(mobilemap,"is mob lap:",lapmap)
-  const mobileData = JSON.stringify(Array.from(mobilemap.entries()));
-  const lapData = JSON.stringify(Array.from(lapmap.entries()));
+  const mobileData = JSON.stringify(Array.from(mobileMap.entries()));
+  const laptopData = JSON.stringify(Array.from(laptopMap.entries()));
+  const stylesData = JSON.stringify(Array.from(stylesMap.entries()));
 
-  const html = `<!DOCTYPE html>
+  const html = `
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dynamic Elements</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Responsive UI</title>
 </head>
 
 <body>
-  <div id="app"></div>
+<div id="app"></div>
 
-  <script>
-    /* ---------------- DATA ---------------- */
+<script>
 
-    const mobileMap = new Map(${mobileData});
-    const lapMap = new Map(${lapData});
+const mobileMap = new Map(${mobileData});
+const laptopMap = new Map(${laptopData});
+const stylesMap = new Map(${stylesData});
 
-    /* ---------------- HELPERS ---------------- */
+/* -------- DEVICE CHECK -------- */
+function isMobile() {
+  return window.innerWidth <= 768;
+}
 
-    function isMobile() {
-      return window.innerWidth <= 768;
+/* -------- TAG HELPER -------- */
+const VALID_TAGS = new Set([
+  "div","p","span","button","img",
+  "section","article","header","footer"
+]);
+
+function getTag(name) {
+  const raw = name.replace(/\\d+/g, "").toLowerCase();
+  return VALID_TAGS.has(raw) ? raw : "div";
+}
+
+/* -------- CREATE ELEMENT -------- */
+function createElement(name) {
+  const el = document.createElement(getTag(name));
+  el.setAttribute("data-name", name);
+
+  const styles = stylesMap.get(name);
+
+  if (styles) {
+
+    // ✅ TEXT CONDITION
+    if (styles.text && styles.text.trim().length > 1) {
+      el.innerText = styles.text;
     }
 
-    function clearUI() {
-      const app = document.getElementById("app");
-      if (app) app.innerHTML = "";
+    for (let prop in styles) {
+
+      // skip text (already handled)
+      if (prop === "text") continue;
+
+      // image src handling
+      if (prop === "src" && el.tagName.toLowerCase() === "img") {
+        el.src = styles[prop];
+        continue;
+      }
+
+      if (prop in el.style) {
+        el.style[prop] = styles[prop];
+      }
     }
+  }
 
-    const VALID_TAGS = new Set([
-      "div", "p", "span", "button", "img",
-      "section", "article", "header", "footer"
-    ]);
+  return el;
+}
+/* -------- TREE BUILDER -------- */
+function buildTree(map, nodeName) {
+  const node = map.get(nodeName);
+  if (!node) return null;
 
-    function buildUIFromMap(map) {
-      const app = document.getElementById("app");
-      if (!app) return;
+  const el = createElement(nodeName);
 
-      const arrayFromMap = Array.from(map.entries());
-
-      arrayFromMap.forEach(([key, config]) => {
-        // Extract tag name from key (div1 → div, p2 → p)
-        const rawTag = key.replace(/\\d+/g, "").toLowerCase();
-        const tag = VALID_TAGS.has(rawTag) ? rawTag : "div";
-
-        const el = document.createElement(tag);
-        el.id = key;
-
-        if (config.text) {
-          el.textContent = config.text;
-        }
-
-        for (const prop in config) {
-          if (prop === "text" || prop === "name") continue;
-
-          // Special handling for img src
-          if (prop === "src" && tag === "img") {
-            el.src = config[prop];
-            continue;
-          }
-
-
-          // Apply only valid style properties
-          if (prop in el.style) {
-          if(prop === "left"){
-          console.log((window.innerWidth/100)*parseInt(config[prop]),"issss",config[prop])
-
-        // el.style[prop]=    (window.innerWidth/100)*parseFloat(config[prop])+"px";
-        el.style[prop]= parseFloat(config[prop])+"vw"
-       continue;
-          }
-            el.style[prop] = config[prop];
-          }
-        }
-
-        app.appendChild(el);
-      });
-    }
-
-    function buildUI() {
-      clearUI();
-      const activeMap = isMobile() ? mobileMap : lapMap;
-      buildUIFromMap(activeMap);
-    }
-
-    /* ---------------- LIFECYCLE ---------------- */
-
-    document.addEventListener("DOMContentLoaded", buildUI);
-
-    // Debounced resize (important for performance)
-    let resizeTimer;
-    window.addEventListener("resize", () => {
-      clearTimeout(resizeTimer);
-      resizeTimer = setTimeout(buildUI, 150);
+  if (node.childrens && node.childrens.length) {
+    node.childrens.forEach(childName => {
+      const childEl = buildTree(map, childName);
+      if (childEl) el.appendChild(childEl);
     });
-  </script>
-</body>
-</html>`;
-console.log(html,"is html")
-   await navigator.clipboard.writeText(html);
-  return html;
+  }
 
+  return el;
+}
+
+/* -------- ROOT FINDER -------- */
+function getRootNodes(map) {
+  const allKeys = Array.from(map.keys());
+  const childSet = new Set();
+
+  map.forEach(value => {
+    if (value.childrens) {
+      value.childrens.forEach(c => childSet.add(c));
+    }
+  });
+
+  return allKeys.filter(k => !childSet.has(k));
+}
+
+/* -------- BUILD UI -------- */
+function buildUI() {
+  const app = document.getElementById("app");
+  app.innerHTML = "";
+
+  const activeMap = isMobile() ? mobileMap : laptopMap;
+
+  const roots = getRootNodes(activeMap);
+
+  roots.forEach(root => {
+    const tree = buildTree(activeMap, root);
+    if (tree) app.appendChild(tree);
+  });
+}
+
+/* -------- INIT + RESIZE -------- */
+document.addEventListener("DOMContentLoaded", buildUI);
+
+let resizeTimer;
+window.addEventListener("resize", () => {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(buildUI, 150);
+});
+
+</script>
+</body>
+</html>
+`;
+
+  await navigator.clipboard.writeText(html);
+  return html;
 }
 export function createViewDesignHtml(
   mobilemap: Map<string, any>,

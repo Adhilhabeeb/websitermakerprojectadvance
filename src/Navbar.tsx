@@ -42,7 +42,7 @@ export default function Navbar({ navref }: navprops) {
     setshowsidemenu,
     showsidemenu,
     mobMapRef,
-    lapMapRef,setMode,mobileoldmapstoreing,historytmapref
+    lapMapRef,setMode,mobileoldmapstoreing,historytmapref,hierarchyMapRef,mobileHierarchyMapRef,mobilestylesmap
   } = context
 
   const location = useLocation()
@@ -171,7 +171,7 @@ locationbpathfromlocalstoprage&&navigate(locationbpathfromlocalstoprage)
               <Button
                 size="sm"
                 onClick={() =>{ 
-                  createhtml(mapref, lapref)}}
+                  createhtml(mobileHierarchyMapRef.current, hierarchyMapRef.current,mobilestylesmap.current)}}
               >
                 Export HTML
               </Button>

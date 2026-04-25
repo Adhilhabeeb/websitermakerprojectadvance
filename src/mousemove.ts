@@ -841,6 +841,13 @@ console.log("cvollehehge. when mobiung",hierarchyMapRef,"is my. mpareff")
                       parentEntry.childrens = parentEntry.childrens.filter(
                         (el: any) => el !== p.id,
                       );
+
+
+
+
+
+
+
                     }
                   }
                   targetEntry.childrens.push(p.id);
@@ -961,6 +968,7 @@ console.log("cvollehehge. when mobiung",hierarchyMapRef,"is my. mpareff")
       var start_drag = function (e: any) {
         setslecetdelemnt(p.dataset.name as string);
 
+
         // ── Restore child from container ───────────────────────────────────────
         const childEl = document.querySelector(`[data-name="${p.id}child"]`);
         if (childEl && childEl.parentElement !== t) {
@@ -984,7 +992,7 @@ console.log("cvollehehge. when mobiung",hierarchyMapRef,"is my. mpareff")
                 (el: any) => el !== p.id,
               );
             }
-            console.log(targetEntry, "is aftercghanging");
+            console.log(targetEntry, "is aftercghanging",hierarchyMapRef);
 
             // Mobile hierarchy
             const mobileTargetEntry = mobileHierarchyMap.get(

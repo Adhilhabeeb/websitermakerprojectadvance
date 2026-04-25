@@ -41,11 +41,24 @@ function DragableBox(props: any) {
       let data = await fetchProjectById(id)
 
       console.log(data, "is teh data is recived ")
-
-      let mobref = JSON.parse(data.mobref)
+    let mobref = JSON.parse(data.mobref)
       let lapref = JSON.parse(data.lapref)
       let mobileoldmap = JSON.parse(data.mobileoldmap)
       let histrorymap = JSON.parse(data.histrorymap)
+
+let hierrachymapparsed=JSON.parse(data.laptop)
+let mobilemapparsedparsed=JSON.parse(data.mobile)
+
+
+let mobilestylesmapp=JSON.parse(data.mobilestyles)
+
+console.log(mobilestylesmapp,"isstylesfrmdata")
+console.log(mobilemapparsedparsed,"ismobilemapheiurtchyparsed")
+console.log(hierrachymapparsed,"isheerachyparsed")
+
+
+
+
       console.log("mobref:", mobref)
 
       console.log("lapref:", lapref)
@@ -57,6 +70,12 @@ function DragableBox(props: any) {
       mobMapRef.current = new Map(mobref)
       lapMapRef.current = new Map(lapref)
       mobileoldmapstoreing.current = new Map(mobileoldmap)
+
+      hierarchyMapRef.current=new Map(hierrachymapparsed)
+      mobileHierarchyMapRef.current=new Map(mobilemapparsedparsed)
+      mobilestylesmap.current=new Map(mobilestylesmapp);
+
+
       let navbar = navref.current
       let navbarprops = navbar?.getBoundingClientRect().height as number
       setcheckedasmobile(false)
@@ -71,7 +90,14 @@ function DragableBox(props: any) {
 
       // console.log(mapref,"is mob",lapref,"is lapppp and oldmaoref",oldmobmap)
       // console.log(Array.from(mapref),"is mapppppp")
-      createElementsFromMap(lapref, addbbutton, navbarprops, checkedasmobile)
+
+
+      console.log(hierarchyMapRef.current,"iisslapp",mobileHierarchyMapRef.current,"ismobile",mobilestylesmap.current,"is styledsssss")
+    
+    
+Maptocreateelemenet(new Map(hierarchyMapRef.current),addbbutton,mobilestylesmap.current,navbarprops)
+    
+      // createElementsFromMap(lapref, addbbutton, navbarprops, checkedasmobile)
 
     }
 
@@ -85,8 +111,30 @@ function DragableBox(props: any) {
 
       console.log("thheheh",hierarchyMapRef.current,"isll",mobileHierarchyMapRef.current,"ismmoo",mobilestylesmap.current,"isstyels")
       let id = pathname.replace("/project/", "")
-      updatemapsave(id, mobMapRef.current, lapMapRef.current, historytmapref.current, mobileoldmapstoreing.current,hierarchyMapRef.current,mobileHierarchyMapRef.current,mobilestylesmap.current)
-      currenthistoryref.current = 0
+
+     const maps = [
+  mobMapRef.current,
+  lapMapRef.current,
+  historytmapref.current,
+  mobileoldmapstoreing.current,
+  hierarchyMapRef.current,
+  mobileHierarchyMapRef.current,
+  mobilestylesmap.current
+];
+
+if ( mobilestylesmap.current.size>1) {
+
+
+  console.log(hierarchyMapRef," kyhohjkgkihgkhg",mobileHierarchyMapRef,"stylesss",mobilestylesmap)
+  updatemapsave(
+    id,
+    ...maps
+  );
+}
+    
+
+
+currenthistoryref.current = 0
       recentscountref.current = 0
 
 
@@ -402,7 +450,7 @@ Maptocreateelemenet(new Map(parsedhsitoryu.mobileHierarchyMap),addbbutton,oldmob
 
   function addbbutton(ele: eleent = "button", data: Record<string, string> | null, isnotparent?:boolean,e?: React.MouseEvent<HTMLElement>,) {
     console.log(data, "is teh adtatattatata", currenthistoryref, "is ref")
-
+console.log("infirstcallllll",mobilestylesmap.current,"is mobilestyles")
     if (data) {
       console.log(data, "data return")
 
@@ -449,6 +497,10 @@ if (!mobileHierarchyMapRef.current.get(button.id)) {
       : ele + countref.current.toString() + "child";
 
     let elemntydefauly = data ?? cssdefalult[ele]
+
+    mobilestylesmap.current.set( button.id,elemntydefauly)
+
+    console.log(mobilestylesmap.current,"is mobielstukelssmaoo")
     if (elemntydefauly?.text && elemntydefauly?.text.trim() != "") {
       button.innerText = elemntydefauly.text
     }

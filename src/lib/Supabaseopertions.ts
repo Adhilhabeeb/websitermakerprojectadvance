@@ -55,7 +55,7 @@ mobileoldmapref=new Map(),
 let laptop=Array.from(hierarchyMapRef)
 let mobile=Array.from(mobileHierarchyMapRef)
 let mobilestyles=Array.from(mobilestylesmap)
-
+console.log(laptop,mobile,mobilestyles,"isnupadytying")
        const { data, error } = await supabase
     .from("websitemaker")
     .update({
@@ -83,6 +83,8 @@ export const fetchProjectById = async (id: string) => {
     .eq("id", id)
     .single()   // 🔥 returns single object instead of array
 
+
+    console.log(data,"is the edattatatat")
   if (error) {
     console.log("Fetch Error:", error)
     return null

@@ -170,7 +170,8 @@ locationbpathfromlocalstoprage&&navigate(locationbpathfromlocalstoprage)
                
               <Button
                 size="sm"
-                onClick={() => createhtml(mapref, lapref)}
+                onClick={() =>{ 
+                  createhtml(mapref, lapref)}}
               >
                 Export HTML
               </Button>
